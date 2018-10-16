@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Datensammler</string>
+    <string name="headAc">Accelometer</string>
+    <string name="headGy">Gyroscope</string>
+    <string name="headCo">Magnetfeld</string>
+    <string name="record">Record</string>
 </resources>
