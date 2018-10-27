@@ -1,11 +1,18 @@
 package datensammer.datensammler;
 
+import android.Manifest;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.StrictMode;
 import android.provider.Settings;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -23,6 +30,9 @@ public class MainActivity extends AppCompatActivity {
     SensorManager sensorManager;
     SensorEventListener sensorEventListener;
     LinkedList<Integer> frequenzbereich;
+
+    LocationManager locationManager;
+    LocationListener locationListener;
 
     /**
      * Angabe ob Messung des Accelerometer aktiv ist
@@ -56,6 +66,14 @@ public class MainActivity extends AppCompatActivity {
     Integer coFrequenz = 1000000;
 
     /**
+     * Angabe ob Messung des Kompass aktiv ist
+     */
+    Switch swchGPS;
+    TextView tvLatitude;
+    TextView tvLongitude;
+    TextView tvAccuracy;
+
+    /**
      * Angabe ob die Daten aufgezeichnet werden
      */
     Switch swchRe;
@@ -76,6 +94,11 @@ public class MainActivity extends AppCompatActivity {
         androidId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
+
+        /* GPS */
+        if(ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 0);
+        }
     }
 
     private void setUpFreuenzBereich() {
@@ -191,7 +214,82 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+        //GPS
+        swchGPS.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(swchGPS.isChecked()){
+                    positionierungMitLocationManager();
+                }else{
+                    //Stop GPS-Tracking
+                    locationManager.removeUpdates(locationListener);
+                }
+            }
+        });
     }
+
+    /******************************************************************************************************************************
+     *      GPS Code BEGIN
+     */
+
+    public void positionierungMitLocationManager(){
+        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+        locationListener = new LocationListener() {
+            @Override
+            public void onLocationChanged(Location location) {
+                tvLatitude.setText("" + location.getLatitude());
+                tvLongitude.setText("" + location.getLongitude());
+                tvAccuracy.setText("" + location.getAccuracy());
+            }
+
+            @Override
+            public void onStatusChanged(String provider, int status, Bundle extras) {
+
+            }
+
+            @Override
+            public void onProviderEnabled(String provider) {
+
+            }
+
+            @Override
+            public void onProviderDisabled(String provider) {
+                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                startActivity(intent);
+            }
+        };
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 0);
+        }
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
+                500,          //minimum time interval between location updates, in milliseconds
+                0,         //minimum distance between location updates, in meters
+                locationListener);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (alleBerechtigungenErteilt(grantResults)) {
+            //------------------starteApplikation();
+        }else{
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 0);
+        }
+    }
+
+    private boolean alleBerechtigungenErteilt(int[] erteileBerechtigungen){
+        for(int erteileBerechtigung : erteileBerechtigungen){
+            if(erteileBerechtigung == PackageManager.PERMISSION_DENIED){
+                return false;
+            }
+        }
+        return true;
+    }
+
+
+    /**
+     *      GPS Code END
+    /******************************************************************************************************************************/
 
     private void setUpSensorManager() {
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
@@ -317,6 +415,12 @@ public class MainActivity extends AppCompatActivity {
         coValY = findViewById(R.id.coValY);
         coValZ = findViewById(R.id.coValZ);
         coHz = findViewById(R.id.coHz);
+
+        //ID's for GPS
+        swchGPS = findViewById(R.id.swchGPS);
+        tvLatitude = findViewById(R.id.tvLatitude);
+        tvLongitude = findViewById(R.id.tvLongitude);
+        tvAccuracy = findViewById(R.id.tvAccuracy);
 
         //Sonstiges
         //Record
