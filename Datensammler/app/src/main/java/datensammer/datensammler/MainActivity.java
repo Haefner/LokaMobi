@@ -14,6 +14,7 @@ import android.location.LocationManager;
 import android.os.StrictMode;
 import android.provider.Settings;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.lifecycle.Observer;
 import datensammer.datensammler.api.Repository;
 import datensammer.datensammler.entities.AccelerometerEvent;
