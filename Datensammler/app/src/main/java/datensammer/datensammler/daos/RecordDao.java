@@ -1,0 +1,40 @@
+package datensammer.datensammler.daos;
+
+import java.util.List;
+
+import androidx.room.Dao;
+import androidx.room.Delete;
+import androidx.room.Insert;
+import androidx.room.Query;
+import androidx.room.Update;
+import datensammer.datensammler.entities.AccelerometerEvent;
+import datensammer.datensammler.entities.GpsLocation;
+import datensammer.datensammler.entities.GyroscopeEvent;
+import datensammer.datensammler.entities.Record;
+
+@Dao
+public interface RecordDao {
+    @Insert
+    long insertRecord(Record record);
+
+    @Update
+    int updateRecords(Record... mesasurement);
+
+    @Delete
+    int deleteRecords(Record record);
+
+    @Query("SELECT * FROM  record")
+    List<Record> getAllRecords();
+
+    @Query("SELECT * FROM record WHERE id = :recordId")
+    Record getRecordById(long recordId);
+
+    @Query("SELECT * FROM accelerometerEvent INNER JOIN record ON record.id = accelerometerEvent.record_id WHERE  accelerometerEvent.record_id = :record")
+    List<AccelerometerEvent> findAccelerometerEventsByRecord(long record);
+
+    @Query("SELECT * FROM gyroscopeEvent INNER JOIN record ON record.id = gyroscopeEvent.record_id WHERE  gyroscopeEvent.record_id = :record")
+    List<GyroscopeEvent> findGyroscopeEventsByRecord(long record);
+
+    @Query("SELECT * FROM gpslocation INNER JOIN record ON record_id = gpslocation.record_id WHERE gpslocation.record_id = :record")
+    List<GpsLocation> findGpsLocationsByRecord(long record);
+}

@@ -1,21 +1,35 @@
 package datensammer.datensammler;
 
+import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.StrictMode;
 import android.provider.Settings;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
+import datensammer.datensammler.api.Repository;
+import datensammer.datensammler.entities.AccelerometerEvent;
+import datensammer.datensammler.entities.GpsLocation;
+import datensammer.datensammler.entities.GyroscopeEvent;
+import datensammer.datensammler.entities.Record;
+
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -23,6 +37,9 @@ public class MainActivity extends AppCompatActivity {
     SensorManager sensorManager;
     SensorEventListener sensorEventListener;
     LinkedList<Integer> frequenzbereich;
+    Repository repo;
+
+    EditText recordName;
 
     /**
      * Angabe ob Messung des Accelerometer aktiv ist
@@ -62,6 +79,8 @@ public class MainActivity extends AppCompatActivity {
 
     String androidId;
 
+    long currentRecordId;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,6 +95,8 @@ public class MainActivity extends AppCompatActivity {
         androidId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
+
+        repo = Repository.getInstance(getApplicationContext());
     }
 
     private void setUpFreuenzBereich() {
@@ -145,16 +166,19 @@ public class MainActivity extends AppCompatActivity {
 
     private void setUpSwitch() {
         //Record: sollen die Daten aufgezeichnet werden
-//        swchRe.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                if (swchRe.isChecked()) {
-//                    datenaufnahme.startRecordDate(androidId);
-//                } else {
-//                    datenaufnahme.stopRecordDate(androidId);
-//                }
-//            }
-//        });
+          swchRe.setOnClickListener(new View.OnClickListener() {
+            @Override
+              public void onClick(View v) {
+                    if (swchRe.isChecked()) {
+                        if(!recordName.getText().toString().equals(""))
+                        {
+                            currentRecordId =  repo.addRecord(new Record(recordName.getText().toString(),new Date(),new Date()));
+                        } else{
+                            Toast.makeText(getApplicationContext(),"Bitte Namen eingeben",Toast.LENGTH_SHORT).show();
+                            swchRe.setChecked(false);
+                        }
+               }
+      }});
 
         //Auswertung welche Sensordaten gemessen werden sollen
 
@@ -210,8 +234,7 @@ public class MainActivity extends AppCompatActivity {
                         gyValY.setText("" + event.values[1]);
                         gyValZ.setText("" + event.values[2]);
                         if (swchRe.isChecked()) {
-                            //TODO Datenrecord
-                            //  datenaufnahme.recordGyroscope(androidId, event.values[0], event.values[1], event.values[2]);
+                            repo.addGyroscopeEvent(new GyroscopeEvent(currentRecordId,event.values[0],event.values[1],event.values[2],event.timestamp));
                         }
                         break;
                     //Bewegungssensor Liniar
@@ -220,8 +243,7 @@ public class MainActivity extends AppCompatActivity {
                         acValY.setText("" + event.values[1]);
                         acValZ.setText("" + event.values[2]);
                         if (swchRe.isChecked()) {
-                            //TODO Datenrecord
-                            //  datenaufnahme.recordAccelometer(androidId, event.values[0], event.values[1], event.values[2]);
+                            repo.addAccelerometerEvent(new AccelerometerEvent(currentRecordId,event.values[0],event.values[1],event.values[2],event.timestamp));
                         }
                         break;
                     //Compass
@@ -322,6 +344,13 @@ public class MainActivity extends AppCompatActivity {
         //Record
         swchRe = findViewById(R.id.swchRe);
 
+        recordName = findViewById(R.id.editTextRecordName);
+
+    }
+
+    public void startResultActivity(View view){
+          Intent intent = new Intent(this, ResultActivity.class);
+          startActivity(intent);
     }
 
 
