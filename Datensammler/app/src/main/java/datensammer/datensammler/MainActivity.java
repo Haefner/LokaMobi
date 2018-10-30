@@ -31,8 +31,11 @@ public class MainActivity extends AppCompatActivity {
     SensorEventListener sensorEventListener;
     LinkedList<Integer> frequenzbereich;
 
-    LocationManager locationManager;
-    LocationListener locationListener;
+    LocationManager locationManagerGPS;
+    LocationListener locationListenerGPS;
+
+    LocationManager locationManagerNetwork;
+    LocationListener locationListenerNetwork;
 
     /**
      * Angabe ob Messung des Accelerometer aktiv ist
@@ -66,12 +69,20 @@ public class MainActivity extends AppCompatActivity {
     Integer coFrequenz = 1000000;
 
     /**
-     * Angabe ob Messung des Kompass aktiv ist
+     * Angabe ob Messung des GPS aktiv ist
      */
     Switch swchGPS;
-    TextView tvLatitude;
-    TextView tvLongitude;
-    TextView tvAccuracy;
+    TextView tvLatitudeGPS;
+    TextView tvLongitudeGPS;
+    TextView tvAccuracyGPS;
+
+    /**
+     * Angabe ob Messung des NETWORK-Ortung aktiv ist
+     */
+    Switch swchNETWORK;
+    TextView tvLatitudeNetwork;
+    TextView tvLongitudeNetwork;
+    TextView tvAccuracyNetwork;
 
     /**
      * Angabe ob die Daten aufgezeichnet werden
@@ -222,7 +233,19 @@ public class MainActivity extends AppCompatActivity {
                     positionierungMitLocationManager();
                 }else{
                     //Stop GPS-Tracking
-                    locationManager.removeUpdates(locationListener);
+                    locationManagerGPS.removeUpdates(locationListenerGPS);
+                }
+            }
+        });
+        //NETWORK
+        swchNETWORK.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(swchNETWORK.isChecked()){
+                    positionierungMitLocationManagerNetwork();
+                }else{
+                    //Stop NETWORK-Tracking
+                    locationManagerNetwork.removeUpdates(locationListenerNetwork);
                 }
             }
         });
@@ -233,13 +256,13 @@ public class MainActivity extends AppCompatActivity {
      */
 
     public void positionierungMitLocationManager(){
-        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-        locationListener = new LocationListener() {
+        locationManagerGPS = (LocationManager) getSystemService(LOCATION_SERVICE);
+        locationListenerGPS = new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
-                tvLatitude.setText("" + location.getLatitude());
-                tvLongitude.setText("" + location.getLongitude());
-                tvAccuracy.setText("" + location.getAccuracy());
+                tvLatitudeGPS.setText("" + location.getLatitude());
+                tvLongitudeGPS.setText("" + location.getLongitude());
+                tvAccuracyGPS.setText("" + location.getAccuracy());
             }
 
             @Override
@@ -261,10 +284,10 @@ public class MainActivity extends AppCompatActivity {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 0);
         }
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
+        locationManagerGPS.requestLocationUpdates(LocationManager.GPS_PROVIDER,
                 500,          //minimum time interval between location updates, in milliseconds
                 0,         //minimum distance between location updates, in meters
-                locationListener);
+                locationListenerGPS);
     }
 
     @Override
@@ -290,6 +313,49 @@ public class MainActivity extends AppCompatActivity {
     /**
      *      GPS Code END
     /******************************************************************************************************************************/
+
+    /******************************************************************************************************************************
+     *      NETWORK Code BEGIN
+     */
+
+    public void positionierungMitLocationManagerNetwork(){
+        locationManagerNetwork = (LocationManager) getSystemService(LOCATION_SERVICE);
+        locationListenerNetwork = new LocationListener() {
+            @Override
+            public void onLocationChanged(Location location) {
+                tvLatitudeNetwork.setText("" + location.getLatitude());
+                tvLongitudeNetwork.setText("" + location.getLongitude());
+                tvAccuracyNetwork.setText("" + location.getProvider());
+            }
+
+            @Override
+            public void onStatusChanged(String provider, int status, Bundle extras) {
+
+            }
+
+            @Override
+            public void onProviderEnabled(String provider) {
+
+            }
+
+            @Override
+            public void onProviderDisabled(String provider) {
+
+            }
+        };
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 0);
+        }
+        locationManagerNetwork.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
+                500,          //minimum time interval between location updates, in milliseconds
+                0,         //minimum distance between location updates, in meters
+                locationListenerNetwork);
+    }
+
+
+    /**
+     *      NETWORK Code END
+     /******************************************************************************************************************************/
 
     private void setUpSensorManager() {
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
@@ -363,7 +429,7 @@ public class MainActivity extends AppCompatActivity {
 //                return;
 //            }
 //            //Pruefe ob GPS aktiviert ist
-//            if (!locationManager
+//            if (!locationManagerGPS
 //                    .isProviderEnabled(LocationManager.GPS_PROVIDER)) {
 //                swchLo.setChecked(false);
 //                swchLoState = false;
@@ -371,7 +437,7 @@ public class MainActivity extends AppCompatActivity {
 //                return;
 //            }
 //            //minDistance Angabe in Meter
-//            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, time, 0.001f, locationListener);
+//            locationManagerGPS.requestLocationUpdates(LocationManager.GPS_PROVIDER, time, 0.001f, locationListenerGPS);
 //
 //        }
         else {
@@ -387,7 +453,7 @@ public class MainActivity extends AppCompatActivity {
         } else if (sensorTyp == SensorTyp.COMPASS) {
             sensorManager.unregisterListener(sensorEventListener, sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD));
 //        } else if (sensorTyp == SensorTyp.LOCATION) {
-//            locationManager.removeUpdates(locationListener);
+//            locationManagerGPS.removeUpdates(locationListenerGPS);
         } else {
             throw new RuntimeException("SensorTyp is not defined");
         }
@@ -418,9 +484,15 @@ public class MainActivity extends AppCompatActivity {
 
         //ID's for GPS
         swchGPS = findViewById(R.id.swchGPS);
-        tvLatitude = findViewById(R.id.tvLatitude);
-        tvLongitude = findViewById(R.id.tvLongitude);
-        tvAccuracy = findViewById(R.id.tvAccuracy);
+        tvLatitudeGPS = findViewById(R.id.tvLatitudeGPS);
+        tvLongitudeGPS = findViewById(R.id.tvLongitudeGPS);
+        tvAccuracyGPS = findViewById(R.id.tvAccuracyGPS);
+
+        //ID's for NETWORK
+        swchNETWORK = findViewById(R.id.swchNetwork);
+        tvLatitudeNetwork = findViewById(R.id.tvLatitudeNetwork);
+        tvLongitudeNetwork = findViewById(R.id.tvLongitudeNetwork);
+        tvAccuracyNetwork = findViewById(R.id.tvAccuracyNetwork);
 
         //Sonstiges
         //Record
