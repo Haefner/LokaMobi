@@ -1,6 +1,7 @@
 package datensammer.datensammler;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.hardware.Sensor;
@@ -10,11 +11,14 @@ import android.hardware.SensorManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.StrictMode;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -36,6 +40,8 @@ public class MainActivity extends AppCompatActivity {
 
     LocationManager locationManagerNetwork;
     LocationListener locationListenerNetwork;
+
+
 
     /**
      * Angabe ob Messung des Accelerometer aktiv ist
@@ -230,7 +236,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if(swchGPS.isChecked()){
-                    positionierungMitLocationManager();
+                    positionierungMitLocationManagerGPS();
                 }else{
                     //Stop GPS-Tracking
                     locationManagerGPS.removeUpdates(locationListenerGPS);
@@ -255,7 +261,7 @@ public class MainActivity extends AppCompatActivity {
      *      GPS Code BEGIN
      */
 
-    public void positionierungMitLocationManager(){
+    public void positionierungMitLocationManagerGPS(){
         locationManagerGPS = (LocationManager) getSystemService(LOCATION_SERVICE);
         locationListenerGPS = new LocationListener() {
             @Override
@@ -325,7 +331,7 @@ public class MainActivity extends AppCompatActivity {
             public void onLocationChanged(Location location) {
                 tvLatitudeNetwork.setText("" + location.getLatitude());
                 tvLongitudeNetwork.setText("" + location.getLongitude());
-                tvAccuracyNetwork.setText("" + location.getProvider());
+                tvAccuracyNetwork.setText("" + location.getAccuracy());
             }
 
             @Override
@@ -340,12 +346,22 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onProviderDisabled(String provider) {
+                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                startActivity(intent);
 
             }
         };
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 0);
         }
+
+        ConnectivityManager connectivityManager = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
+        if(connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() != NetworkInfo.State.CONNECTED &&
+                connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() != NetworkInfo.State.CONNECTED) {
+            Intent intentWifi = new Intent(Settings.ACTION_WIFI_SETTINGS);
+            startActivity(intentWifi);
+        }
+
         locationManagerNetwork.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
                 500,          //minimum time interval between location updates, in milliseconds
                 0,         //minimum distance between location updates, in meters
