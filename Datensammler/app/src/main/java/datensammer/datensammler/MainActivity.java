@@ -264,6 +264,14 @@ public class MainActivity extends AppCompatActivity {
                 tvLatitude.setText("" + location.getLatitude());
                 tvLongitude.setText("" + location.getLongitude());
                 tvAccuracy.setText("" + location.getAccuracy());
+                if (swchRe.isChecked()) {
+                    repo.addGpsLocation(new GpsLocation(currentRecordId,location.getLongitude(),location.getLatitude(),
+                            location.getAltitude(),
+                            location.getBearing(),
+                            location.getSpeed(),
+                            location.getTime()));
+                }
+
             }
 
             @Override

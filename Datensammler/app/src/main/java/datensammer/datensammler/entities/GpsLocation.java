@@ -31,7 +31,7 @@ import static androidx.room.ForeignKey.CASCADE;
         public long timestamp;
 
 
-        public GpsLocation(long recordId, float bearing, double latitude, double longitude, double altitude, float speed, long timestamp) {
+        public GpsLocation(long recordId, double latitude, double longitude, double altitude, float bearing, float speed, long timestamp) {
             this.recordId = recordId;
             this.bearing = bearing;
             this.latitude = latitude;
