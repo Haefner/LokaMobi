@@ -6,6 +6,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import datensammer.datensammler.daos.RecordDao;
 import datensammer.datensammler.daos.SensorEventDao;
@@ -36,6 +37,8 @@ public class Repository {
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         OkHttpClient client = new OkHttpClient.Builder()
+                .readTimeout(3,TimeUnit.MINUTES)
+                .writeTimeout(3,TimeUnit.MINUTES)
                 .addInterceptor(interceptor)
                 .build();
 
@@ -45,7 +48,7 @@ public class Repository {
                 .create();
 
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://10.0.2.2:3000/api/v1/")
+                .baseUrl("https://lokamotion.de/api/v1/")
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .client(client)
