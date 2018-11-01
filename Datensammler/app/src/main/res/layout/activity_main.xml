@@ -301,24 +301,25 @@
 
             <Switch
                 android:id="@+id/swchRe"
-                android:layout_width="wrap_content"
-                android:layout_height="23dp"
-                android:layout_marginBottom="8dp"
-                android:layout_marginStart="16dp"
+                android:layout_width="40dp"
+                android:layout_height="36dp"
+                android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
-                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tvAccuracyNetwork" />
+                app:layout_constraintTop_toBottomOf="@+id/textView4" />
 
             <TextView
                 android:id="@+id/textView4"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="0dp"
+                android:layout_height="19dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="12dp"
                 android:layout_marginEnd="8dp"
                 android:text="@string/record"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.034"
-                app:layout_constraintStart_toEndOf="@+id/swchRe" />
+                app:layout_constraintHorizontal_bias="0.495"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView19" />
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textView15" />
 
@@ -327,13 +328,11 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:layout_marginTop="11dp"
+                android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
-                android:layout_marginBottom="79dp"
                 android:ems="10"
                 android:hint="Record name"
                 android:inputType="textPersonName"
-                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/swchRe"
                 app:layout_constraintTop_toBottomOf="@+id/textView4" />
@@ -499,11 +498,12 @@
 
             <Button
                 android:id="@+id/buttonViewRecords"
-                android:layout_width="0dp"
+                android:layout_width="122dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="131dp"
-                android:layout_marginTop="30dp"
-                android:layout_marginEnd="131dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="8dp"
                 android:onClick="startResultActivity"
                 android:text="@string/button_records"
                 app:layout_constraintBottom_toBottomOf="parent"
