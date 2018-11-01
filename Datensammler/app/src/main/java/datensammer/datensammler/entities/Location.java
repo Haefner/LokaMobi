@@ -1,6 +1,7 @@
 package datensammer.datensammler.entities;
 
 import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
@@ -31,6 +32,7 @@ import static androidx.room.ForeignKey.CASCADE;
         @Expose
         public long timestamp;
         @Expose
+        @SerializedName("location_type")
         public LocationType locationType;
 
 
