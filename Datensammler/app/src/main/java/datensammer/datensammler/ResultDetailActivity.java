@@ -13,8 +13,9 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import datensammer.datensammler.api.Repository;
 import datensammer.datensammler.entities.AccelerometerEvent;
-import datensammer.datensammler.entities.GpsLocation;
+import datensammer.datensammler.entities.Location;
 import datensammer.datensammler.entities.GyroscopeEvent;
+import datensammer.datensammler.entities.MagnetometerEvent;
 import datensammer.datensammler.entities.Record;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -25,7 +26,8 @@ public class ResultDetailActivity extends AppCompatActivity {
     Record record;
     List<AccelerometerEvent> accelerometerEventList;
     List<GyroscopeEvent> gyroscopeEventList;
-    List<GpsLocation> gpsLocationList;
+    List<Location> locationList;
+    List<MagnetometerEvent> magnetometerEventList;
 
 
     @Override
@@ -73,6 +75,7 @@ public class ResultDetailActivity extends AppCompatActivity {
                 uploadGyroscopeData(id);
                 uploadAccelerometeData(id);
                 uploadLocationData(id);
+                uploadMagnetoMeterData(id);
             }
 
             @Override
@@ -117,8 +120,8 @@ public class ResultDetailActivity extends AppCompatActivity {
 
 
     private void uploadLocationData(long id){
-        gpsLocationList = repository.findGpsLocationsByRecord(record.id);
-        repository.postLocations(gpsLocationList,id).enqueue(new Callback<Void>() {
+        locationList = repository.findGpsLocationsByRecord(record.id);
+        repository.postLocations(locationList,id).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
 
@@ -132,4 +135,19 @@ public class ResultDetailActivity extends AppCompatActivity {
     }
 
 
+    private void uploadMagnetoMeterData(long id){
+        magnetometerEventList = repository.findMagnetometerEventByRecord(record.id);
+
+        repository.postMagnetometerData(magnetometerEventList,id).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+
+            }
+        });
+    }
 }

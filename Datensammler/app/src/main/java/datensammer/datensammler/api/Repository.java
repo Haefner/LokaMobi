@@ -13,8 +13,9 @@ import datensammer.datensammler.daos.SensorEventDao;
 import datensammer.datensammler.database.AppDatabase;
 import datensammer.datensammler.database.Database;
 import datensammer.datensammler.entities.AccelerometerEvent;
-import datensammer.datensammler.entities.GpsLocation;
+import datensammer.datensammler.entities.Location;
 import datensammer.datensammler.entities.GyroscopeEvent;
+import datensammer.datensammler.entities.MagnetometerEvent;
 import datensammer.datensammler.entities.Record;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -87,16 +88,21 @@ public class Repository {
         return service.addGyroscopeData(gyroscopeData,record_id);
     }
 
-    public Call<Void> postLocations(List<GpsLocation> locations, long record_id){
+    public Call<Void> postLocations(List<Location> locations, long record_id){
 
         return service.addLocations(locations,record_id);
+    }
+
+    public Call<Void> postMagnetometerData(List<MagnetometerEvent> magnetometerEvents, long record_id){
+
+        return service.addMagnetometerData(magnetometerEvents,record_id);
     }
 
     public long addRecord(Record record){
         return  recordDao.insertRecord(record);
     }
 
-    public void addGpsLocation(GpsLocation location){
+    public void addGpsLocation(Location location){
         sensorEventDao.insertGpsLocation(location);
     }
 
@@ -107,6 +113,10 @@ public class Repository {
 
     public void addGyroscopeEvent(GyroscopeEvent event){
         sensorEventDao.insertGyroscopeEvent(event);
+    }
+
+    public void addMagnetometerEvent(MagnetometerEvent event){
+        sensorEventDao.insertMagnetometerEvent(event);
     }
 
 
@@ -123,7 +133,11 @@ public class Repository {
         return recordDao.findGyroscopeEventsByRecord(record);
    }
 
-    public List<GpsLocation> findGpsLocationsByRecord(long record){
+    public List<Location> findGpsLocationsByRecord(long record){
         return recordDao.findGpsLocationsByRecord(record);
+    }
+
+    public List<MagnetometerEvent> findMagnetometerEventByRecord(long record){
+        return recordDao.findMagnetometerEventsByRecord(record);
     }
 }

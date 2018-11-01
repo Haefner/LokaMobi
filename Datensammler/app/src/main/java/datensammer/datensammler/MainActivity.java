@@ -4,12 +4,10 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
@@ -18,15 +16,15 @@ import android.os.StrictMode;
 import android.provider.Settings;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
-import androidx.lifecycle.Observer;
 import datensammer.datensammler.api.Repository;
 import datensammer.datensammler.entities.AccelerometerEvent;
-import datensammer.datensammler.entities.GpsLocation;
+import datensammer.datensammler.entities.Location;
 import datensammer.datensammler.entities.GyroscopeEvent;
+import datensammer.datensammler.entities.LocationType;
+import datensammer.datensammler.entities.MagnetometerEvent;
 import datensammer.datensammler.entities.Record;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -36,10 +34,8 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -288,14 +284,15 @@ public class MainActivity extends AppCompatActivity {
         locationManagerGPS = (LocationManager) getSystemService(LOCATION_SERVICE);
         locationListenerGPS = new LocationListener() {
             @Override
-            public void onLocationChanged(Location location) {
+            public void onLocationChanged(android.location.Location location) {
 
                 if (swchRe.isChecked()) {
-                    repo.addGpsLocation(new GpsLocation(currentRecordId,location.getLongitude(),location.getLatitude(),
+                    repo.addGpsLocation(new Location(currentRecordId,location.getLongitude(),location.getLatitude(),
                             location.getAltitude(),
                             location.getBearing(),
                             location.getSpeed(),
-                            location.getTime()));
+                            location.getTime(),
+                            LocationType.GPS));
                 }
 
                 tvLatitudeGPS.setText("" + location.getLatitude());
@@ -360,10 +357,19 @@ public class MainActivity extends AppCompatActivity {
         locationManagerNetwork = (LocationManager) getSystemService(LOCATION_SERVICE);
         locationListenerNetwork = new LocationListener() {
             @Override
-            public void onLocationChanged(Location location) {
+            public void onLocationChanged(android.location.Location location) {
                 tvLatitudeNetwork.setText("" + location.getLatitude());
                 tvLongitudeNetwork.setText("" + location.getLongitude());
                 tvAccuracyNetwork.setText("" + location.getAccuracy());
+
+                if (swchRe.isChecked()) {
+                    repo.addGpsLocation(new Location(currentRecordId,location.getLongitude(),location.getLatitude(),
+                            location.getAltitude(),
+                            location.getBearing(),
+                            location.getSpeed(),
+                            location.getTime(),
+                            LocationType.NETWORK));
+                }
             }
 
             @Override
@@ -440,8 +446,7 @@ public class MainActivity extends AppCompatActivity {
                         coValY.setText("" + event.values[1]);
                         coValZ.setText("" + event.values[2]);
                         if (swchRe.isChecked()) {
-                            //TODO Datenrecord
-                            //    datenaufnahme.recordCompass(androidId, event.values[0], event.values[1], event.values[2]);
+                            repo.addMagnetometerEvent(new MagnetometerEvent(currentRecordId,event.values[0],event.values[1],event.values[2],event.timestamp));
                         }
                         break;
                 }
