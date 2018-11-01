@@ -4,20 +4,22 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".MainActivity"
+    tools:layout_editor_absoluteY="81dp">
 
     <ScrollView
         android:id="@+id/scrollView2"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:layout_editor_absoluteX="16dp"
-        tools:layout_editor_absoluteY="52dp">
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="0dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
             <!-- Accelometer -->
+
             <TextView
                 android:id="@+id/textView2"
                 android:layout_width="wrap_content"
@@ -78,6 +80,15 @@
                 app:layout_constraintStart_toEndOf="@+id/textView11" />
 
             <TextView
+                android:id="@+id/acValZ"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:text="acValZ"
+                app:layout_constraintBaseline_toBaselineOf="@+id/textView12"
+                app:layout_constraintStart_toEndOf="@+id/textView12" />
+
+            <TextView
                 android:id="@+id/textView12"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -86,15 +97,6 @@
                 android:text="Z"
                 app:layout_constraintStart_toEndOf="@+id/swchAc"
                 app:layout_constraintTop_toBottomOf="@+id/textView11" />
-
-            <TextView
-                android:id="@+id/acValZ"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:text="acValZ"
-                app:layout_constraintBaseline_toBaselineOf="@+id/textView12"
-                app:layout_constraintStart_toEndOf="@+id/textView12" />
 
             <Spinner
                 android:id="@+id/acHz"
@@ -299,22 +301,24 @@
 
             <Switch
                 android:id="@+id/swchRe"
-                android:layout_width="48dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="9dp"
+                android:layout_width="wrap_content"
+                android:layout_height="23dp"
+                android:layout_marginBottom="8dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView4" />
+                app:layout_constraintTop_toBottomOf="@+id/tvAccuracyNetwork" />
 
             <TextView
                 android:id="@+id/textView4"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="10dp"
                 android:layout_marginEnd="8dp"
                 android:text="@string/record"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.034"
+                app:layout_constraintStart_toEndOf="@+id/swchRe" />
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textView15" />
 
@@ -334,6 +338,7 @@
                 app:layout_constraintStart_toEndOf="@+id/swchRe"
                 app:layout_constraintTop_toBottomOf="@+id/textView4" />
 
+            <!-- GPS -->
             <Switch
                 android:id="@+id/swchGPS"
                 android:layout_width="wrap_content"
@@ -376,16 +381,16 @@
                 app:layout_constraintTop_toBottomOf="@+id/textView5" />
 
             <TextView
-                android:id="@+id/tvLatitude"
+                android:id="@+id/tvLatitudeGPS"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
+                android:layout_marginStart="24dp"
                 android:text="latitude"
                 app:layout_constraintBaseline_toBaselineOf="@+id/textView5"
                 app:layout_constraintStart_toEndOf="@+id/textView5" />
 
             <TextView
-                android:id="@+id/tvLongitude"
+                android:id="@+id/tvLongitudeGPS"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
@@ -404,13 +409,93 @@
                 app:layout_constraintTop_toBottomOf="@+id/textView6" />
 
             <TextView
-                android:id="@+id/tvAccuracy"
+                android:id="@+id/tvAccuracyGPS"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:text="accuracy"
                 app:layout_constraintBaseline_toBaselineOf="@+id/textView15"
                 app:layout_constraintStart_toEndOf="@+id/textView15" />
+
+            <!-- NETWORK -->
+            <TextView
+                android:id="@+id/textView13"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="16dp"
+                android:text="NETWORK"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.501"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tvAccuracyGPS" />
+
+            <Switch
+                android:id="@+id/swchNetwork"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="12dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView13" />
+
+            <TextView
+                android:id="@+id/textView16"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="Breitengrad"
+                app:layout_constraintBaseline_toBaselineOf="@+id/swchNetwork"
+                app:layout_constraintStart_toEndOf="@+id/swchNetwork" />
+
+            <TextView
+                android:id="@+id/textView17"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:text="Längengrad"
+                app:layout_constraintStart_toEndOf="@+id/swchNetwork"
+                app:layout_constraintTop_toBottomOf="@+id/textView16" />
+
+            <TextView
+                android:id="@+id/textView19"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:text="Genauigkeit"
+                app:layout_constraintStart_toEndOf="@+id/swchNetwork"
+                app:layout_constraintTop_toBottomOf="@+id/textView17" />
+
+            <TextView
+                android:id="@+id/tvLatitudeNetwork"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="latitude"
+                app:layout_constraintBaseline_toBaselineOf="@+id/textView16"
+                app:layout_constraintStart_toEndOf="@+id/textView16" />
+
+            <TextView
+                android:id="@+id/tvLongitudeNetwork"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="longitude"
+                app:layout_constraintBaseline_toBaselineOf="@+id/textView17"
+                app:layout_constraintStart_toEndOf="@+id/textView16" />
+
+            <TextView
+                android:id="@+id/tvAccuracyNetwork"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="accuracy"
+                app:layout_constraintBaseline_toBaselineOf="@+id/textView19"
+                app:layout_constraintStart_toEndOf="@+id/textView19" />
 
             <Button
                 android:id="@+id/buttonViewRecords"
