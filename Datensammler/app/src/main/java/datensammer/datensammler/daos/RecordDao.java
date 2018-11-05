@@ -1,5 +1,6 @@
 package datensammer.datensammler.daos;
 
+import java.util.Date;
 import java.util.List;
 
 import androidx.room.Dao;
@@ -23,6 +24,9 @@ public interface RecordDao {
 
     @Delete
     int deleteRecords(Record record);
+
+    @Query("UPDATE record SET timeend = :time_end WHERE id=:recordId")
+    void updateRecordTimeEnd(long recordId,Date time_end);
 
     @Query("SELECT * FROM  record")
     List<Record> getAllRecords();

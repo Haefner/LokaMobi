@@ -25,6 +25,7 @@ import datensammer.datensammler.entities.MagnetometerEvent;
 import datensammer.datensammler.entities.Record;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -213,6 +214,10 @@ public class MainActivity extends AppCompatActivity {
                             swchRe.setChecked(false);
                         }
                }
+               else {
+                        Date date = new Date();
+                        repo.updateRecordTimeEnd(currentRecordId,date);
+                    }
       }});
 
         //Auswertung welche Sensordaten gemessen werden sollen

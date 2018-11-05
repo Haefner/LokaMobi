@@ -5,6 +5,7 @@ import android.content.Context;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -100,6 +101,10 @@ public class Repository {
 
     public long addRecord(Record record){
         return  recordDao.insertRecord(record);
+    }
+
+    public void updateRecordTimeEnd(long id,Date timeEnd) {
+         recordDao.updateRecordTimeEnd(id,timeEnd);
     }
 
     public void addGpsLocation(Location location){
