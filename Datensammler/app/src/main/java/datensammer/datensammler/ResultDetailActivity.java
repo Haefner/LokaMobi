@@ -5,6 +5,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+
+import org.w3c.dom.Text;
 
 import java.util.Date;
 import java.util.List;
@@ -28,11 +33,26 @@ public class ResultDetailActivity extends AppCompatActivity {
     List<GyroscopeEvent> gyroscopeEventList;
     List<Location> locationList;
     List<MagnetometerEvent> magnetometerEventList;
+    ProgressBar progressBarUpload;
+    TextView httpStatusRecord;
+    TextView httpStatusGyro;
+    TextView httpStatusLocations;
+    TextView httpStatusAccel;
+    TextView httpStatusMagnetometer;
 
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_result_details);
+
+        progressBarUpload = findViewById(R.id.progressBarUpload);
+        httpStatusAccel = findViewById(R.id.textViewStatusAccelerometer);
+        httpStatusRecord = findViewById(R.id.textViewStatusRecord);
+        httpStatusGyro = findViewById(R.id.textViewStatusGyroscope);
+        httpStatusLocations = findViewById(R.id.textViewStatusLocation);
+        httpStatusMagnetometer = findViewById(R.id.textViewStatusMagnetometer);
+
         record = new Record();
         record.id = getIntent().getLongExtra("record_id", 0);
         record.name = getIntent().getStringExtra("record_name");
@@ -68,9 +88,11 @@ public class ResultDetailActivity extends AppCompatActivity {
     private void uploadData(){
 
 
+        progressBarUpload.setVisibility(View.VISIBLE);
         repository.postRecord(record).enqueue(new Callback<Record>() {
             @Override
             public void onResponse(Call<Record> call, Response<Record> response) {
+                httpStatusRecord.append(String.valueOf(response.code()));
                 long id  = response.body().id;
                 uploadGyroscopeData(id);
                 uploadAccelerometeData(id);
@@ -80,6 +102,7 @@ public class ResultDetailActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<Record> call, Throwable t) {
+                progressBarUpload.setVisibility(View.INVISIBLE);
 
             }
         });
@@ -92,11 +115,13 @@ public class ResultDetailActivity extends AppCompatActivity {
         repository.postGyroscopeData(gyroscopeEventList,id).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
+                httpStatusGyro.append(String.valueOf(response.code()));
 
             }
 
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
+                progressBarUpload.setVisibility(View.INVISIBLE);
 
             }
         });
@@ -108,11 +133,13 @@ public class ResultDetailActivity extends AppCompatActivity {
         repository.postAccelerometerData(accelerometerEventList,id).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
+                httpStatusAccel.append(String.valueOf(response.code()));
 
             }
 
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
+                progressBarUpload.setVisibility(View.INVISIBLE);
 
             }
         });
@@ -124,11 +151,13 @@ public class ResultDetailActivity extends AppCompatActivity {
         repository.postLocations(locationList,id).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
+                httpStatusLocations.append(String.valueOf(response.code()));
 
             }
 
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
+                progressBarUpload.setVisibility(View.INVISIBLE);
 
             }
         });
@@ -141,11 +170,13 @@ public class ResultDetailActivity extends AppCompatActivity {
         repository.postMagnetometerData(magnetometerEventList,id).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
-
+                progressBarUpload.setVisibility(View.INVISIBLE);
+                httpStatusMagnetometer.append(String.valueOf(response.code()));
             }
 
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
+                progressBarUpload.setVisibility(View.INVISIBLE);
 
             }
         });
