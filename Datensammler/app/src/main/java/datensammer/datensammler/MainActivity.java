@@ -26,10 +26,13 @@ import datensammer.datensammler.entities.Record;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -133,6 +136,16 @@ public class MainActivity extends AppCompatActivity {
         }
 
         repo = Repository.getInstance(getApplicationContext());
+
+
+        ScrollView view = findViewById(R.id.scrollView2);
+        view.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                v.requestFocusFromTouch();
+                return false;
+            }
+        });
     }
 
     private void setUpFreuenzBereich() {
@@ -208,6 +221,7 @@ public class MainActivity extends AppCompatActivity {
                     if (swchRe.isChecked()) {
                         if(!recordName.getText().toString().equals(""))
                         {
+
                             currentRecordId =  repo.addRecord(new Record(recordName.getText().toString(),new Date(),new Date()));
                         } else{
                             Toast.makeText(getApplicationContext(),"Bitte Namen eingeben",Toast.LENGTH_SHORT).show();
