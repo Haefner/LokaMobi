@@ -6,4 +6,5 @@
     <string name="record">Record</string>
     <string name="button_records">View records</string>
     <string name="upload_data">upload_data</string>
+    <string name="title_activity_maps">Map</string>
 </resources>

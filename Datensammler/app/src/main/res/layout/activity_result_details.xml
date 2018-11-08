@@ -36,7 +36,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textViewStatusMagnetometer" />
+                app:layout_constraintTop_toBottomOf="@+id/buttonShowMap" />
 
             <TextView
                 android:id="@+id/textViewHttpStatus"
@@ -111,7 +111,21 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="1.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textViewStatusLocation" /><![CDATA[
+                app:layout_constraintTop_toBottomOf="@+id/textViewStatusLocation" />
+
+            <Button
+                android:id="@+id/buttonShowMap"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="12dp"
+                android:layout_marginEnd="8dp"
+                android:onClick="onButtonShowMapClick"
+                android:text="Show Map"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textViewStatusMagnetometer" /><![CDATA[
 
             "@+id/textViewStatusRecord"
                 android:id="@+id/te"
