@@ -31,6 +31,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ScrollView;
 import android.widget.Spinner;
@@ -50,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
     Repository repo;
 
     EditText recordName;
+    Button buttonViewRecords;
 
     LocationManager locationManagerGPS;
     LocationListener locationListenerGPS;
@@ -137,7 +139,7 @@ public class MainActivity extends AppCompatActivity {
 
         repo = Repository.getInstance(getApplicationContext());
 
-
+        buttonViewRecords = findViewById(R.id.buttonViewRecords);
         ScrollView view = findViewById(R.id.scrollView2);
         view.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -221,7 +223,7 @@ public class MainActivity extends AppCompatActivity {
                     if (swchRe.isChecked()) {
                         if(!recordName.getText().toString().equals(""))
                         {
-
+                            buttonViewRecords.setEnabled(false);
                             currentRecordId =  repo.addRecord(new Record(recordName.getText().toString(),new Date(),new Date()));
                         } else{
                             Toast.makeText(getApplicationContext(),"Bitte Namen eingeben",Toast.LENGTH_SHORT).show();
@@ -229,8 +231,10 @@ public class MainActivity extends AppCompatActivity {
                         }
                }
                else {
+
                         Date date = new Date();
                         repo.updateRecordTimeEnd(currentRecordId,date);
+                        buttonViewRecords.setEnabled(true);
                     }
       }});
 
@@ -573,6 +577,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void startResultActivity(View view){
+        if(swchRe.isChecked()){
+
+        }
           Intent intent = new Intent(this, ResultActivity.class);
           startActivity(intent);
     }
