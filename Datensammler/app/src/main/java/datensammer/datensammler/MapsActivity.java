@@ -25,7 +25,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-        recordId = getIntent().getExtras().getLong("record_id");
+        //recordId = getIntent().getExtras().getLong("record_id");
     }
 
 

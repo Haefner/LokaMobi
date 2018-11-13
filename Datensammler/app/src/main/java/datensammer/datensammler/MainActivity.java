@@ -52,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
 
     EditText recordName;
     Button buttonViewRecords;
+    Button buttonMapsView;
 
     LocationManager locationManagerGPS;
     LocationListener locationListenerGPS;
@@ -148,6 +149,8 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         });
+
+        buttonMapsView = findViewById(R.id.buttonMapView);
     }
 
     private void setUpFreuenzBereich() {
@@ -582,6 +585,14 @@ public class MainActivity extends AppCompatActivity {
         }
           Intent intent = new Intent(this, ResultActivity.class);
           startActivity(intent);
+    }
+
+
+    public void onButtonShowMapClick(View view){
+
+        Intent intent = new Intent(this,MapsActivity.class);
+        startActivity(intent);
+
     }
 
 

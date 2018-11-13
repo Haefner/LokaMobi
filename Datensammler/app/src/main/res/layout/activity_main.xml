@@ -502,14 +502,26 @@
                 android:id="@+id/buttonViewRecords"
                 android:layout_width="122dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
-                android:layout_marginBottom="8dp"
                 android:onClick="startResultActivity"
                 android:text="@string/button_records"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/editTextRecordName" />
+
+            <Button
+                android:id="@+id/buttonMapView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="1dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="155dp"
+                android:layout_marginBottom="1dp"
+                android:onClick="onButtonShowMapClick"
+                android:text="Show Map"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/buttonViewRecords"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/editTextRecordName" />
 
