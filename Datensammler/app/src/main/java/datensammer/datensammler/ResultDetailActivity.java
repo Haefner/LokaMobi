@@ -85,6 +85,15 @@ public class ResultDetailActivity extends AppCompatActivity {
         return true;
     }
 
+
+    public void onButtonShowMapClick(View view){
+
+        Intent intent = new Intent(this,MapsActivity.class);
+        intent.putExtra("record_id",record.id);
+        startActivity(intent);
+
+    }
+
     private void uploadData(){
 
 
