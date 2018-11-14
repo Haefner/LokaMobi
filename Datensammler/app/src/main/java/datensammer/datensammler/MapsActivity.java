@@ -3,17 +3,35 @@ package datensammer.datensammler;
 import androidx.fragment.app.FragmentActivity;
 
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
+import java.util.ArrayList;
+import java.util.List;
+
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnMarkerDragListener {
 
     private GoogleMap mMap;
+    private List<Marker> routeMarkerList;
+    private Button buttonStartStop;
+    private Button buttonFix;
+    private Button buttonEditMode;
+    private Button buttonAddWp;
+    private Button buttonResetRoute;
+    private boolean recordMode;
+    private boolean editMode;
+    private Marker cursorMarker;
     long recordId;
 
     @Override
@@ -26,9 +44,84 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mapFragment.getMapAsync(this);
 
         //recordId = getIntent().getExtras().getLong("record_id");
+
+        routeMarkerList = new ArrayList<>();
+
+        buttonStartStop = findViewById(R.id.buttonStart);
+        buttonFix = findViewById(R.id.buttonFix);
+        buttonEditMode = findViewById(R.id.buttonEditRoute);
+
+        buttonAddWp = findViewById(R.id.buttonAddWp);
+        buttonResetRoute = findViewById(R.id.buttonResetRoute);
+
+        buttonFix.setEnabled(recordMode);
     }
 
 
+
+    public void onButtonStartStopClick(View view){
+
+        if(routeMarkerList.isEmpty()){
+            Toast.makeText(this,"No Route selected.",Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        recordMode = !recordMode;
+        buttonFix.setEnabled(recordMode);
+        buttonEditMode.setEnabled(!recordMode);
+
+        if(recordMode){
+            buttonStartStop.setText("Stop");
+        }else{buttonStartStop.setText("Start");}
+    }
+
+
+    public void onButtonFixClick(View view){
+        Log.d("Fix","Clicked");
+
+    }
+
+    public void onButtonEditRoute(View view){
+
+        editMode = !editMode;
+        buttonStartStop.setEnabled(!editMode);
+
+        if(editMode){
+            buttonEditMode.setText("Save Route");
+            buttonResetRoute.setVisibility(View.VISIBLE);
+            buttonAddWp.setVisibility(View.VISIBLE);
+        }else{
+            buttonEditMode.setText("Edit Route");
+            buttonResetRoute.setVisibility(View.INVISIBLE);
+            buttonAddWp.setVisibility(View.INVISIBLE);
+            cursorMarker.remove();
+
+        }
+
+
+
+        if(editMode){
+                cursorMarker = mMap.addMarker(new MarkerOptions().position(mMap.getCameraPosition().target).title("Cursor"));
+                cursorMarker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
+                cursorMarker.setDraggable(true);
+        }
+
+
+
+    }
+
+
+    public  void onButtonResetRouteClick(View view){
+
+        routeMarkerList.forEach( marker -> marker.remove());
+        routeMarkerList = new ArrayList<>();
+
+    }
+
+    public void onButtonAddWpClick(View view){
+        Marker marker = mMap.addMarker(new MarkerOptions().position(cursorMarker.getPosition()).title("WP "+String.valueOf(routeMarkerList.size()+1)).draggable(true));
+        routeMarkerList.add(marker);
+    }
     /**
      * Manipulates the map once available.
      * This callback is triggered when the map is ready to be used.
@@ -41,10 +134,21 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        mMap.setOnMarkerDragListener(this);
 
-        // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(-34, 151);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+    }
+
+    @Override
+    public void onMarkerDragStart(Marker marker) {
+
+    }
+
+    @Override
+    public void onMarkerDrag(Marker marker) {
+
+    }
+
+    @Override
+    public void onMarkerDragEnd(Marker marker) {
     }
 }
