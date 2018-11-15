@@ -25,13 +25,13 @@
             android:id="@+id/gpsLocationProvider"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="GPS_LOCATION_PROVIDER" />
+            android:text="LOCATION_MANAGER_GPS" />
 
         <RadioButton
             android:id="@+id/netzwerkLocationProvider"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="NETZWERK_LOCATION_PROVIDER" />
+            android:text="LOCATION_MANAGER_NETZWERK" />
 
         <RadioButton
             android:id="@+id/fusedLocationProviderHighAccuancy"
