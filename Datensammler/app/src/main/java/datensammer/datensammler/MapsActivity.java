@@ -41,6 +41,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private boolean editMode;
     private Marker cursorMarker;
     private LocationMessung locationMessung;
+    private LocationProvider locationProvider;
     private SharedPreferences sharedPref;
     private SharedPreferences.Editor shPrfEditor;
     //Liste, in der zu den gesetzen Wegpunkten die Zeiten speichert.
@@ -112,10 +113,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         shPrfEditor.putString("SavedRoute",jsonList);
         shPrfEditor.commit();
     }
-    public void onButtonStartStopClick(View view){
+    public void onButtonStartStopClick(View view) {
 
-        if(routeMarkerList.isEmpty()){
-            Toast.makeText(this,"No Route selected.",Toast.LENGTH_SHORT).show();
+        if (routeMarkerList.isEmpty()) {
+            Toast.makeText(this, "No Route selected.", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -123,16 +124,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         buttonFix.setEnabled(recordMode);
         buttonEditMode.setEnabled(!recordMode);
 
-        if(recordMode){
+        if (recordMode) {
             buttonStartStop.setText("Stop");
-        }else{
+        } else {
             //Button Stop wurde gedrueckt
             buttonStartStop.setText("Start");
             //Setze den Wegpunkt der den Zeitpunkten zugeordnet werden soll zurück auf den ersten Wert der Liste.
-            numberWegpunkt=0;
-            fixWaypoints.clear();}
+            numberWegpunkt = 0;
+            fixWaypoints.clear();
+        }
     }
-
 
     /**
      * Jedes mal, wenn Fix geklickt wird, ordne dem Zeitstempel den nächsten Wegpunkt zu.
