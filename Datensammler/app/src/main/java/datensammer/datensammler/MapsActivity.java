@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -151,7 +152,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap = googleMap;
         mMap.setOnMarkerDragListener(this);
 
+        //Zoome zur Hochschule Bochum
+        LatLng myPosition= new LatLng(51.447561,7.270792);
+        CameraUpdate yourLocation = CameraUpdateFactory.newLatLngZoom(myPosition, 19);
+        mMap.animateCamera(yourLocation);
+
     }
+
+
 
     @Override
     public void onMarkerDragStart(Marker marker) {
