@@ -1,13 +1,17 @@
 package datensammer.datensammler;
 
 import androidx.fragment.app.FragmentActivity;
+import datensammer.datensammler.entities.Location;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -16,7 +20,10 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,10 +36,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private Button buttonEditMode;
     private Button buttonAddWp;
     private Button buttonResetRoute;
+    private Button changeView;
     private boolean recordMode;
     private boolean editMode;
     private Marker cursorMarker;
     private LocationMessung locationMessung;
+    private SharedPreferences sharedPref;
+    private SharedPreferences.Editor shPrfEditor;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,12 +64,50 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         buttonAddWp = findViewById(R.id.buttonAddWp);
         buttonResetRoute = findViewById(R.id.buttonResetRoute);
+        changeView = findViewById(R.id.buttonChangeView);
 
         buttonFix.setEnabled(recordMode);
+
+         sharedPref = this.getPreferences(Context.MODE_PRIVATE);
+         shPrfEditor = sharedPref.edit();
     }
 
 
+    private void loadSavedRoute(){
+        String jsonRouteList = sharedPref.getString("SavedRoute","");
+        Log.d("List",jsonRouteList);
+        if(jsonRouteList.equals("")){
+            return;
+        }else{
+            ArrayList<LatLng> positionList;
+            Gson gson = new Gson();
+            Type listType = new TypeToken<ArrayList<LatLng>>() {}.getType();
+            positionList = gson.fromJson(jsonRouteList,listType);
 
+            for(LatLng position : positionList){
+                Marker marker = mMap.addMarker(new MarkerOptions().position(position).title("WP "+String.valueOf(routeMarkerList.size()+1)).draggable(true));
+                routeMarkerList.add(marker);
+            }
+        }
+
+    }
+
+
+    private  void saveRoute(){
+        ArrayList<LatLng> positionList = new ArrayList<>();
+        Gson gson = new Gson();
+        Type listType = new TypeToken<ArrayList<LatLng>>() {}.getType();
+
+        for(Marker marker : routeMarkerList){
+
+            positionList.add(marker.getPosition());
+
+        }
+        String jsonList = gson.toJson(positionList,listType);
+        Log.d("List",jsonList);
+        shPrfEditor.putString("SavedRoute",jsonList);
+        shPrfEditor.commit();
+    }
     public void onButtonStartStopClick(View view){
 
         if(routeMarkerList.isEmpty()){
@@ -96,6 +145,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             buttonAddWp.setVisibility(View.INVISIBLE);
             cursorMarker.remove();
 
+            saveRoute();
         }
 
 
@@ -105,8 +155,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 cursorMarker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
                 cursorMarker.setDraggable(true);
         }
-
-
 
     }
 
@@ -122,6 +170,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Marker marker = mMap.addMarker(new MarkerOptions().position(cursorMarker.getPosition()).title("WP "+String.valueOf(routeMarkerList.size()+1)).draggable(true));
         routeMarkerList.add(marker);
     }
+
+    public void onButtonChangeView(View view)
+    {
+        //Satellitenansicht
+        if(mMap.getMapType() == GoogleMap.MAP_TYPE_HYBRID)
+        {
+            mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+        }
+        else{
+        mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);}
+    }
+
+
     /**
      * Manipulates the map once available.
      * This callback is triggered when the map is ready to be used.
@@ -135,8 +196,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         mMap.setOnMarkerDragListener(this);
+        loadSavedRoute();
+
+        //Zoome zur Hochschule Bochum
+        LatLng myPosition= new LatLng(51.447561,7.270792);
+        CameraUpdate yourLocation = CameraUpdateFactory.newLatLngZoom(myPosition, 19);
+        mMap.animateCamera(yourLocation);
 
     }
+
+
 
     @Override
     public void onMarkerDragStart(Marker marker) {
