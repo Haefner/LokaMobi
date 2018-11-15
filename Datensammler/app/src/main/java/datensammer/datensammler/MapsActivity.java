@@ -29,6 +29,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private Button buttonEditMode;
     private Button buttonAddWp;
     private Button buttonResetRoute;
+    private Button changeView;
     private boolean recordMode;
     private boolean editMode;
     private Marker cursorMarker;
@@ -53,6 +54,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         buttonAddWp = findViewById(R.id.buttonAddWp);
         buttonResetRoute = findViewById(R.id.buttonResetRoute);
+        changeView = findViewById(R.id.buttonChangeView);
 
         buttonFix.setEnabled(recordMode);
     }
@@ -122,6 +124,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Marker marker = mMap.addMarker(new MarkerOptions().position(cursorMarker.getPosition()).title("WP "+String.valueOf(routeMarkerList.size()+1)).draggable(true));
         routeMarkerList.add(marker);
     }
+
+    public void onButtonChangeView(View view)
+    {
+        //Satellitenansicht
+        if(mMap.getMapType() == GoogleMap.MAP_TYPE_HYBRID)
+        {
+            mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+        }
+        else{
+        mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);}
+    }
+
+
     /**
      * Manipulates the map once available.
      * This callback is triggered when the map is ready to be used.
