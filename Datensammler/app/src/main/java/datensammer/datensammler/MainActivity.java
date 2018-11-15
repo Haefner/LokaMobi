@@ -80,6 +80,7 @@ public class MainActivity extends AppCompatActivity {
     public void onButtonShowMapClick(View view){
 
         Intent intent = new Intent(this,MapsActivity.class);
+        intent.putExtra("LocationMessung", LocationMessung.FUSED_LOCATION_PROVIDER_BALANCED_POWER);
         startActivity(intent);
 
     }

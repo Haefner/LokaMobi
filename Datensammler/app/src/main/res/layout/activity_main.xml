@@ -39,6 +39,18 @@
             android:layout_height="match_parent"
             android:text="FUSED_LOCATION_PROVIDER_HIGH_ACCUANCY" />
 
+        <RadioButton
+            android:id="@+id/fusedLocationProviderBalancedPower"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="FUSED_LOCATION_PROVIDER_BALANCED_POWER" />
+
+        <RadioButton
+            android:id="@+id/fusedLocationProviderNoPower"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="FUSED_LOCATION_PROVIDER_NO_POWER" />
+
 
     </RadioGroup>
 
