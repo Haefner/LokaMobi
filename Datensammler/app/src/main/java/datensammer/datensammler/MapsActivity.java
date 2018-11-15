@@ -125,7 +125,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         buttonEditMode.setEnabled(!recordMode);
 
         if (recordMode) {
-            //Button Start wurde gedrueckt
+            //Button Start wurde gedruecktgit 
             buttonStartStop.setText("Stop");
             locationProvider = new LocationProvider(this,this,locationMessung);
             locationProvider.start();
