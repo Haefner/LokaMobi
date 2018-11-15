@@ -11,6 +11,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import android.location.Location;
+
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -212,7 +214,34 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);}
     }
 
+    List<LatLng> interpolatePointsLocation(LatLng latLng1,  LatLng latLng2, long t1, long t2){
+        List<LatLng> interpoliertenKoordinatenList = new ArrayList<>();
+        double stepTimeinms = 1000.0;
+        double deltaTime;
+        double newLongitude;
+        double newLatitude;
 
+        double deltaLongitude = latLng2.longitude - latLng1.longitude;
+        double deltaLatitude = latLng2.latitude - latLng1.latitude;
+
+        double gesamtTime = t2 - t1;
+        double currentTimeforLoop = t1 + stepTimeinms;
+
+
+
+        while (currentTimeforLoop < t2){
+
+            deltaTime = (currentTimeforLoop - t1)/gesamtTime;
+            newLongitude =  latLng1.longitude + deltaLongitude*deltaTime;
+            newLatitude =  latLng1.latitude + deltaLatitude*deltaTime;
+            LatLng newLatLng = new LatLng(newLatitude,newLongitude);
+
+            interpoliertenKoordinatenList.add(newLatLng);
+            currentTimeforLoop = currentTimeforLoop + stepTimeinms;
+            Log.d("test", String.valueOf(currentTimeforLoop));
+        }
+        return interpoliertenKoordinatenList;
+    }
     /**
      * Manipulates the map once available.
      * This callback is triggered when the map is ready to be used.
