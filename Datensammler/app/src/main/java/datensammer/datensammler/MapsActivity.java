@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -35,6 +36,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private Button buttonEditMode;
     private Button buttonAddWp;
     private Button buttonResetRoute;
+    private Button changeView;
     private boolean recordMode;
     private boolean editMode;
     private Marker cursorMarker;
@@ -62,6 +64,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         buttonAddWp = findViewById(R.id.buttonAddWp);
         buttonResetRoute = findViewById(R.id.buttonResetRoute);
+        changeView = findViewById(R.id.buttonChangeView);
 
         buttonFix.setEnabled(recordMode);
 
@@ -167,6 +170,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Marker marker = mMap.addMarker(new MarkerOptions().position(cursorMarker.getPosition()).title("WP "+String.valueOf(routeMarkerList.size()+1)).draggable(true));
         routeMarkerList.add(marker);
     }
+
+    public void onButtonChangeView(View view)
+    {
+        //Satellitenansicht
+        if(mMap.getMapType() == GoogleMap.MAP_TYPE_HYBRID)
+        {
+            mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+        }
+        else{
+        mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);}
+    }
+
+
     /**
      * Manipulates the map once available.
      * This callback is triggered when the map is ready to be used.
@@ -182,7 +198,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.setOnMarkerDragListener(this);
         loadSavedRoute();
 
+        //Zoome zur Hochschule Bochum
+        LatLng myPosition= new LatLng(51.447561,7.270792);
+        CameraUpdate yourLocation = CameraUpdateFactory.newLatLngZoom(myPosition, 19);
+        mMap.animateCamera(yourLocation);
+
     }
+
+
 
     @Override
     public void onMarkerDragStart(Marker marker) {
