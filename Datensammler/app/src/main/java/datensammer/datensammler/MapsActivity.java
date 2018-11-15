@@ -113,9 +113,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         shPrfEditor.commit();
     }
     public void onButtonStartStopClick(View view){
-        //Setze den Wegpunkt der den Zeitpunkten zugeordnet werden soll zurück auf den ersten Wert der Liste.
-        numberWegpunkt=0;
-        fixWaypoints.clear();
+
         if(routeMarkerList.isEmpty()){
             Toast.makeText(this,"No Route selected.",Toast.LENGTH_SHORT).show();
             return;
@@ -127,7 +125,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         if(recordMode){
             buttonStartStop.setText("Stop");
-        }else{buttonStartStop.setText("Start");}
+        }else{
+            //Button Stop wurde gedrueckt
+            buttonStartStop.setText("Start");
+            //Setze den Wegpunkt der den Zeitpunkten zugeordnet werden soll zurück auf den ersten Wert der Liste.
+            numberWegpunkt=0;
+            fixWaypoints.clear();}
     }
 
 
