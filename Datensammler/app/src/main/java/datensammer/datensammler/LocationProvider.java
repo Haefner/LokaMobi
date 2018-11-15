@@ -45,6 +45,18 @@ public class LocationProvider {
         m_enumLM = enumLocationMessung;
     }
 
+    public void stop(){
+        /* stop LocationManager */
+        if(locationManager != null){
+            locationManager.removeUpdates(locationListener);
+        }
+
+        /* stop FusedLocationProviderClient */
+        if(getFusedLocationProviderClient(m_activity) != null && locationCallback != null){
+            getFusedLocationProviderClient(m_activity).removeLocationUpdates(locationCallback);
+        }
+    }
+
 
     public void start(){
 
@@ -62,6 +74,7 @@ public class LocationProvider {
                  m_enumLM == LocationMessung.FUSED_LOCATION_PROVIDER_LOW_POWER ||
                  m_enumLM == LocationMessung.FUSED_LOCATION_PROVIDER_NO_POWER)
         {
+            Log.d("LocationProvider","positionierungMitFusedLocationProviderClient--------------------------------");
             postionierungMitFusedLocationProviderClient();
         }else{
             Toast.makeText(m_context,"No LocationProvider selected.",Toast.LENGTH_SHORT).show();
@@ -80,7 +93,11 @@ public class LocationProvider {
             @Override
             public void onLocationChanged(Location location) {
                 //set locationVariable
-                Log.d("LocationProvider","Längengrad: " + location.getLongitude());
+                Log.d("LocationProvider","....................Längengrad: " + location.getLongitude());
+
+                /***********************************************************************************/
+//--------------> list.add(location)
+                /*********************************************************************************/
 
             }
 
@@ -116,9 +133,9 @@ public class LocationProvider {
 
     public void postionierungMitFusedLocationProviderClient(){
         locationRequest = new LocationRequest();
-        //locationRequest.setInterval(2000);
-        //locationRequest.setMaxWaitTime(1000);
-/*
+        locationRequest.setInterval(1000);
+        locationRequest.setMaxWaitTime(1000);
+
         switch (m_enumLM){
             case FUSED_LOCATION_PROVIDER_HIGH_ACCUANCY: locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
             break;
@@ -129,7 +146,7 @@ public class LocationProvider {
             case FUSED_LOCATION_PROVIDER_NO_POWER: locationRequest.setPriority(LocationRequest.PRIORITY_NO_POWER);
             break;
         }
-*/
+
         if (ActivityCompat.checkSelfPermission(m_context.getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(m_context.getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(m_activity, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 0);
         }
@@ -137,7 +154,11 @@ public class LocationProvider {
         getFusedLocationProviderClient(m_activity).requestLocationUpdates(locationRequest, locationCallback = new LocationCallback(){
             public void onLocationResult(LocationResult locationResult){
                 //onLocatioChanged(locationResult.getLastLocation());
-//                Log.d("runnable","Längengrad: " + locationResult.getLastLocation().getLongitude());
+                Log.d("LocationProvider","------------------- Längengrad: " + locationResult.getLastLocation().getLongitude());
+
+                /***********************************************************************************/
+//--------------> list.add(locationResult.getLastLocation())
+                /*********************************************************************************/
 
             }
         }, Looper.myLooper());

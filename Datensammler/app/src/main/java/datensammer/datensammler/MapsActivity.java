@@ -132,6 +132,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             locationProvider.start();
         }else{
             buttonStartStop.setText("Start");
+            locationProvider.stop();
         }
     }
 
