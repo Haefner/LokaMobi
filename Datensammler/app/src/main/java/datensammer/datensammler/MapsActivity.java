@@ -1,7 +1,10 @@
 package datensammer.datensammler;
 
 import androidx.fragment.app.FragmentActivity;
+import datensammer.datensammler.entities.Location;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -16,7 +19,10 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,6 +39,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private boolean editMode;
     private Marker cursorMarker;
     private LocationMessung locationMessung;
+    private SharedPreferences sharedPref;
+    private SharedPreferences.Editor shPrfEditor;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,10 +64,47 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         buttonResetRoute = findViewById(R.id.buttonResetRoute);
 
         buttonFix.setEnabled(recordMode);
+
+         sharedPref = this.getPreferences(Context.MODE_PRIVATE);
+         shPrfEditor = sharedPref.edit();
     }
 
 
+    private void loadSavedRoute(){
+        String jsonRouteList = sharedPref.getString("SavedRoute","");
+        Log.d("List",jsonRouteList);
+        if(jsonRouteList.equals("")){
+            return;
+        }else{
+            ArrayList<LatLng> positionList;
+            Gson gson = new Gson();
+            Type listType = new TypeToken<ArrayList<LatLng>>() {}.getType();
+            positionList = gson.fromJson(jsonRouteList,listType);
 
+            for(LatLng position : positionList){
+                Marker marker = mMap.addMarker(new MarkerOptions().position(position).title("WP "+String.valueOf(routeMarkerList.size()+1)).draggable(true));
+                routeMarkerList.add(marker);
+            }
+        }
+
+    }
+
+
+    private  void saveRoute(){
+        ArrayList<LatLng> positionList = new ArrayList<>();
+        Gson gson = new Gson();
+        Type listType = new TypeToken<ArrayList<LatLng>>() {}.getType();
+
+        for(Marker marker : routeMarkerList){
+
+            positionList.add(marker.getPosition());
+
+        }
+        String jsonList = gson.toJson(positionList,listType);
+        Log.d("List",jsonList);
+        shPrfEditor.putString("SavedRoute",jsonList);
+        shPrfEditor.commit();
+    }
     public void onButtonStartStopClick(View view){
 
         if(routeMarkerList.isEmpty()){
@@ -96,6 +142,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             buttonAddWp.setVisibility(View.INVISIBLE);
             cursorMarker.remove();
 
+            saveRoute();
         }
 
 
@@ -105,8 +152,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 cursorMarker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
                 cursorMarker.setDraggable(true);
         }
-
-
 
     }
 
@@ -135,6 +180,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         mMap.setOnMarkerDragListener(this);
+        loadSavedRoute();
 
     }
 
