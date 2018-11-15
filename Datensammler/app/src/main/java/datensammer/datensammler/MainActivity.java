@@ -33,6 +33,8 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.Switch;
@@ -46,6 +48,8 @@ public class MainActivity extends AppCompatActivity {
 
     Repository repo;
     Button buttonMapsView;
+    private RadioGroup radioGroup;
+    private RadioButton gpsLocationProvider, netzwerkLocationProvider, fusedLocationProviderHighAccuancy, fusedLocationProviderBalancedPower, fusedLocationProviderNoPower;
 
 
     String androidId;
@@ -65,22 +69,59 @@ public class MainActivity extends AppCompatActivity {
 
         repo = Repository.getInstance(getApplicationContext());
 
-        buttonMapsView = findViewById(R.id.buttonMapView);
+
     }
+
 
 
 
     protected void setUpIDs() {
+        buttonMapsView = findViewById(R.id.buttonMapView);
+        radioGroup = (RadioGroup) findViewById(R.id.myRadioGroup);
+        gpsLocationProvider = (RadioButton) findViewById(R.id.gpsLocationProvider);
+        netzwerkLocationProvider = (RadioButton) findViewById(R.id.netzwerkLocationProvider);
+        fusedLocationProviderHighAccuancy = (RadioButton) findViewById(R.id.fusedLocationProviderHighAccuancy);
+        fusedLocationProviderBalancedPower = (RadioButton) findViewById(R.id.fusedLocationProviderBalancedPower);
+        fusedLocationProviderNoPower = (RadioButton) findViewById(R.id.fusedLocationProviderNoPower);
+
 
     }
 
 
+    /**
+     * Die Methode ermittelt, welche LocationMessung über die Radiobuttons ausgewählt ist.
+     * @return LocationMessung
+     */
+    private LocationMessung getLocationMessungRadioButton()
+    {
+        int selectedId = radioGroup.getCheckedRadioButtonId();
+        LocationMessung radio=null;
+        if(selectedId == R.id.gpsLocationProvider) {
+            radio=LocationMessung.GPS_LOCATION_PROVIDER;
+        }
+        if(selectedId == R.id.netzwerkLocationProvider) {
+            radio=LocationMessung.NETZWERK_LOCATION_PROVIDER;
+        }
+        if(selectedId == R.id.fusedLocationProviderHighAccuancy) {
+            radio=LocationMessung.FUSED_LOCATION_PROVIDER_HIGH_ACCUANCY;
+        }
+        if(selectedId == R.id.fusedLocationProviderBalancedPower) {
+            radio=LocationMessung.FUSED_LOCATION_PROVIDER_BALANCED_POWER;
+        }
+        if(selectedId == R.id.fusedLocationProviderNoPower) {
+            radio=LocationMessung.FUSED_LOCATION_PROVIDER_NO_POWER;
+        }
+        return radio;
+    }
 
 
     public void onButtonShowMapClick(View view){
 
+
+
+
         Intent intent = new Intent(this,MapsActivity.class);
-        intent.putExtra("LocationMessung", LocationMessung.FUSED_LOCATION_PROVIDER_BALANCED_POWER);
+        intent.putExtra("LocationMessung", getLocationMessungRadioButton());
         startActivity(intent);
 
     }
