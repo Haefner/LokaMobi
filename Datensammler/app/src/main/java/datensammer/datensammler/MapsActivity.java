@@ -43,6 +43,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private LocationMessung locationMessung;
     private SharedPreferences sharedPref;
     private SharedPreferences.Editor shPrfEditor;
+    //Liste, in der zu den gesetzen Wegpunkten die Zeiten speichert.
+    private List<android.location.Location> fixWaypoints= new ArrayList<>();
+    //Zaeler der mitzahlt beim wievielten Wegpunkt man sich befindet
+    int numberWegpunkt=0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,7 +113,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         shPrfEditor.commit();
     }
     public void onButtonStartStopClick(View view){
-
+        //Setze den Wegpunkt der den Zeitpunkten zugeordnet werden soll zurück auf den ersten Wert der Liste.
+        numberWegpunkt=0;
+        fixWaypoints.clear();
         if(routeMarkerList.isEmpty()){
             Toast.makeText(this,"No Route selected.",Toast.LENGTH_SHORT).show();
             return;
@@ -125,9 +131,24 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
 
+    /**
+     * Jedes mal, wenn Fix geklickt wird, ordne dem Zeitstempel den nächsten Wegpunkt zu.
+     * Ist die Liste abgearbeitet, dann fange wieder bei eins an
+     * @param view
+     */
     public void onButtonFixClick(View view){
         Log.d("Fix","Clicked");
-
+        android.location.Location location = new android.location.Location("Messpunkt");
+        location.setTime(System.currentTimeMillis());
+        location.setLatitude(routeMarkerList.get(numberWegpunkt).getPosition().latitude);
+        location.setLongitude(routeMarkerList.get(numberWegpunkt).getPosition().longitude);
+        fixWaypoints.add(location);
+        numberWegpunkt= numberWegpunkt + 1 ;
+        if(numberWegpunkt==routeMarkerList.size())
+        {
+            //Alle Wegpunkte sind zugeordnet. Man muss erst stopp und start für die nächste Messung drücken
+            buttonFix.setEnabled(false);
+        }
     }
 
     public void onButtonEditRoute(View view){
