@@ -1,7 +1,10 @@
 package datensammer.datensammler;
 
 import androidx.fragment.app.FragmentActivity;
+import datensammer.datensammler.entities.Location;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -17,7 +20,10 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,6 +41,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private boolean editMode;
     private Marker cursorMarker;
     private LocationMessung locationMessung;
+    private LocationProvider locationProvider;
+    private SharedPreferences sharedPref;
+    private SharedPreferences.Editor shPrfEditor;
+    //Liste, in der zu den gesetzen Wegpunkten die Zeiten speichert.
+    private List<android.location.Location> fixWaypoints= new ArrayList<>();
+    //Zaeler der mitzahlt beim wievielten Wegpunkt man sich befindet
+    int numberWegpunkt=0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,14 +72,51 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         changeView = findViewById(R.id.buttonChangeView);
 
         buttonFix.setEnabled(recordMode);
+
+         sharedPref = this.getPreferences(Context.MODE_PRIVATE);
+         shPrfEditor = sharedPref.edit();
     }
 
 
+    private void loadSavedRoute(){
+        String jsonRouteList = sharedPref.getString("SavedRoute","");
+        Log.d("List",jsonRouteList);
+        if(jsonRouteList.equals("")){
+            return;
+        }else{
+            ArrayList<LatLng> positionList;
+            Gson gson = new Gson();
+            Type listType = new TypeToken<ArrayList<LatLng>>() {}.getType();
+            positionList = gson.fromJson(jsonRouteList,listType);
 
-    public void onButtonStartStopClick(View view){
+            for(LatLng position : positionList){
+                Marker marker = mMap.addMarker(new MarkerOptions().position(position).title("WP "+String.valueOf(routeMarkerList.size()+1)).draggable(true));
+                routeMarkerList.add(marker);
+            }
+        }
 
-        if(routeMarkerList.isEmpty()){
-            Toast.makeText(this,"No Route selected.",Toast.LENGTH_SHORT).show();
+    }
+
+
+    private  void saveRoute(){
+        ArrayList<LatLng> positionList = new ArrayList<>();
+        Gson gson = new Gson();
+        Type listType = new TypeToken<ArrayList<LatLng>>() {}.getType();
+
+        for(Marker marker : routeMarkerList){
+
+            positionList.add(marker.getPosition());
+
+        }
+        String jsonList = gson.toJson(positionList,listType);
+        Log.d("List",jsonList);
+        shPrfEditor.putString("SavedRoute",jsonList);
+        shPrfEditor.commit();
+    }
+    public void onButtonStartStopClick(View view) {
+
+        if (routeMarkerList.isEmpty()) {
+            Toast.makeText(this, "No Route selected.", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -73,15 +124,40 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         buttonFix.setEnabled(recordMode);
         buttonEditMode.setEnabled(!recordMode);
 
-        if(recordMode){
+        if (recordMode) {
+            //Button Start wurde gedrueckt
             buttonStartStop.setText("Stop");
-        }else{buttonStartStop.setText("Start");}
+            locationProvider = new LocationProvider(this,this,locationMessung);
+            locationProvider.start();
+        } else {
+            //Button Stop wurde gedrueckt
+            buttonStartStop.setText("Start");
+            locationProvider.stop();
+            //Setze den Wegpunkt der den Zeitpunkten zugeordnet werden soll zurück auf den ersten Wert der Liste.
+            numberWegpunkt = 0;
+            fixWaypoints.clear();
+
+        }
     }
 
-
+    /**
+     * Jedes mal, wenn Fix geklickt wird, ordne dem Zeitstempel den nächsten Wegpunkt zu.
+     * Ist die Liste abgearbeitet, dann fange wieder bei eins an
+     * @param view
+     */
     public void onButtonFixClick(View view){
         Log.d("Fix","Clicked");
-
+        android.location.Location location = new android.location.Location("Messpunkt");
+        location.setTime(System.currentTimeMillis());
+        location.setLatitude(routeMarkerList.get(numberWegpunkt).getPosition().latitude);
+        location.setLongitude(routeMarkerList.get(numberWegpunkt).getPosition().longitude);
+        fixWaypoints.add(location);
+        numberWegpunkt= numberWegpunkt + 1 ;
+        if(numberWegpunkt==routeMarkerList.size())
+        {
+            //Alle Wegpunkte sind zugeordnet. Man muss erst stopp und start für die nächste Messung drücken
+            buttonFix.setEnabled(false);
+        }
     }
 
     public void onButtonEditRoute(View view){
@@ -99,6 +175,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             buttonAddWp.setVisibility(View.INVISIBLE);
             cursorMarker.remove();
 
+            saveRoute();
         }
 
 
@@ -108,8 +185,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 cursorMarker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
                 cursorMarker.setDraggable(true);
         }
-
-
 
     }
 
@@ -151,6 +226,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         mMap.setOnMarkerDragListener(this);
+        loadSavedRoute();
 
         //Zoome zur Hochschule Bochum
         LatLng myPosition= new LatLng(51.447561,7.270792);
