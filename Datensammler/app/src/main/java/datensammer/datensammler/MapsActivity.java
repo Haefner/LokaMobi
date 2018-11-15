@@ -32,8 +32,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private boolean recordMode;
     private boolean editMode;
     private Marker cursorMarker;
-    long recordId;
-
+    private LocationMessung locationMessung;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,7 +42,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-        //recordId = getIntent().getExtras().getLong("record_id");
+        locationMessung = (LocationMessung) getIntent().getExtras().getSerializable("LocationMessung");
+        Log.d("Extra",String.valueOf(locationMessung));
 
         routeMarkerList = new ArrayList<>();
 
