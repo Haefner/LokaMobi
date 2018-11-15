@@ -41,6 +41,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private boolean editMode;
     private Marker cursorMarker;
     private LocationMessung locationMessung;
+    private LocationProvider locationProvider;
     private SharedPreferences sharedPref;
     private SharedPreferences.Editor shPrfEditor;
 
@@ -121,7 +122,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         if(recordMode){
             buttonStartStop.setText("Stop");
-        }else{buttonStartStop.setText("Start");}
+            locationProvider = new LocationProvider(this,this,locationMessung);
+            locationProvider.start();
+        }else{
+            buttonStartStop.setText("Start");
+        }
     }
 
 
