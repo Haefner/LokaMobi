@@ -52,9 +52,7 @@ public class MainActivity extends AppCompatActivity {
     private RadioGroup radioGroup;
     private RadioButton gpsLocationProvider, netzwerkLocationProvider, fusedLocationProviderHighAccuancy, fusedLocationProviderBalancedPower, fusedLocationProviderLowPower, fusedLocationProviderNoPower;
 
-
     String androidId;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,10 +64,7 @@ public class MainActivity extends AppCompatActivity {
         androidId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
-
-
         repo = Repository.getInstance(getApplicationContext());
-
 
     }
 
@@ -83,10 +78,7 @@ public class MainActivity extends AppCompatActivity {
         fusedLocationProviderBalancedPower = (RadioButton) findViewById(R.id.fusedLocationProviderBalancedPower);
         fusedLocationProviderNoPower = (RadioButton) findViewById(R.id.fusedLocationProviderNoPower);
         fusedLocationProviderLowPower = (RadioButton) findViewById(R.id.fusedLocationProviderLowPower);
-
-
     }
-
 
     /**
      * Die Methode ermittelt, welche LocationMessung über die Radiobuttons ausgewählt ist.
@@ -119,12 +111,9 @@ public class MainActivity extends AppCompatActivity {
 
 
     public void onButtonShowMapClick(View view) {
-
-
         Intent intent = new Intent(this, MapsActivity.class);
         intent.putExtra("LocationMessung", getLocationMessungRadioButton());
         startActivity(intent);
-
     }
 
 
