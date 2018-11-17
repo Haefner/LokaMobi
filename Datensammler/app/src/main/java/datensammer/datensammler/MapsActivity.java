@@ -131,6 +131,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             locationProvider.start();
         } else {
             //Button Stop wurde gedrueckt
+
+            //Ergebnisse in CSV speichern.
+            CsvExporter csvExporter = new CsvExporter(this,this);
+            csvExporter.write(routeMarkerList,null,null);
+
             buttonStartStop.setText("Start");
             locationProvider.stop();
             //Setze den Wegpunkt der den Zeitpunkten zugeordnet werden soll zurück auf den ersten Wert der Liste.
