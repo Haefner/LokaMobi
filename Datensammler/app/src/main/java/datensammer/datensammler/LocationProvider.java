@@ -90,8 +90,14 @@ public class LocationProvider {
 
         locationManager = (LocationManager) m_context.getSystemService(Context.LOCATION_SERVICE);
         locationListener = new LocationListener() {
+            /* Variable for first location data */
+            boolean isFirstLocation = true;
             @Override
             public void onLocationChanged(Location location) {
+                if(isFirstLocation){
+                    Toast.makeText(m_context,"First Location Data received.",Toast.LENGTH_SHORT).show();
+                    isFirstLocation = false;
+                }
                 //set locationVariable
                 Log.d("LocationProvider","....................Längengrad: " + location.getLongitude());
 
@@ -152,7 +158,14 @@ public class LocationProvider {
         }
 
         getFusedLocationProviderClient(m_activity).requestLocationUpdates(locationRequest, locationCallback = new LocationCallback(){
+            /* Variable for first location data */
+            boolean isFirstLocation = true;
+
             public void onLocationResult(LocationResult locationResult){
+                if(isFirstLocation){
+                    Toast.makeText(m_context,"First Location Data received.",Toast.LENGTH_SHORT).show();
+                    isFirstLocation = false;
+                }
                 //onLocatioChanged(locationResult.getLastLocation());
                 Log.d("LocationProvider","------------------- Längengrad: " + locationResult.getLastLocation().getLongitude());
 
