@@ -18,6 +18,9 @@ import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static com.google.android.gms.location.LocationServices.getFusedLocationProviderClient;
 
 import androidx.core.app.ActivityCompat;
@@ -25,6 +28,8 @@ import androidx.core.app.ActivityCompat;
 
 public class LocationProvider {
 
+
+    private List<Location> locationList;
     LocationMessung m_enumLM;
     Context m_context;
     Activity m_activity;
@@ -43,6 +48,7 @@ public class LocationProvider {
         m_context = context;
         m_activity = activity;
         m_enumLM = enumLocationMessung;
+        locationList = new ArrayList<>();
     }
 
     public void stop(){
@@ -96,7 +102,7 @@ public class LocationProvider {
                 Log.d("LocationProvider","....................Längengrad: " + location.getLongitude());
 
                 /***********************************************************************************/
-//--------------> list.add(location)
+                 locationList.add(location);
                 /*********************************************************************************/
 
             }
@@ -157,7 +163,7 @@ public class LocationProvider {
                 Log.d("LocationProvider","------------------- Längengrad: " + locationResult.getLastLocation().getLongitude());
 
                 /***********************************************************************************/
-//--------------> list.add(locationResult.getLastLocation())
+                 locationList.add(locationResult.getLastLocation());
                 /*********************************************************************************/
 
             }
@@ -172,6 +178,8 @@ public class LocationProvider {
 
     }
 
-
+    public List<Location> getLocationList() {
+        return locationList;
+    }
 
 }

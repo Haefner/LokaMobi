@@ -134,10 +134,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             //Ergebnisse in CSV speichern.
             CsvExporter csvExporter = new CsvExporter(this,this);
-            csvExporter.write(routeMarkerList,null,null);
+
 
             buttonStartStop.setText("Start");
             locationProvider.stop();
+
+            csvExporter.write(routeMarkerList,null,fixWaypoints);
+
             //Setze den Wegpunkt der den Zeitpunkten zugeordnet werden soll zurück auf den ersten Wert der Liste.
             numberWegpunkt = 0;
             fixWaypoints.clear();

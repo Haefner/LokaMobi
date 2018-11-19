@@ -39,11 +39,11 @@ public class CsvExporter {
     public void write(List<Marker> waypoints, List<LatLng> interpolations, List<Location> fixedPoints){
       //TODO: Umwandlung der Werte in String.
         StringBuffer stringBuffer = new StringBuffer();
-        for(Marker markers : waypoints ){
-
-            String longitudeString =String.valueOf(markers.getPosition().longitude);
+        for(int i = 0;i < fixedPoints.size();i++) {
+           /* String longitudeString =String.valueOf(markers.getPosition().longitude);
             String latitudeString = String.valueOf(markers.getPosition().latitude);
-            stringBuffer.append(markers.getTitle()+","+longitudeString+","+latitudeString+"\n");
+            stringBuffer.append(markers.getTitle()+","+longitudeString+","+latitudeString+"\n"+","+fixedPoints);*/
+           stringBuffer.append(String.valueOf(fixedPoints.get(i).getLongitude())+"\n");
         }
 
 
