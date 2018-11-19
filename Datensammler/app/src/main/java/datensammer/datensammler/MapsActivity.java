@@ -146,7 +146,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             buttonStartStop.setText("Start");
             buttonAuswertung.setVisibility(View.VISIBLE);
             locationProvider.stop();
-
+            interpolatePoints(locationProvider.getRecordList());
+            List<Record> test = locationProvider.getRecordList();
             csvExporter.write(locationProvider.getRecordList());
 
             //Setze den Wegpunkt der den Zeitpunkten zugeordnet werden soll zurück auf den ersten Wert der Liste.
@@ -316,6 +317,37 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
         return interpoliertenKoordinatenList;
     }
+
+    void interpolatePoints(List<Record> recordList){
+
+        int positionVonMarkerInRecordlist[] = new int[routeMarkerList.size()];
+        int j = 0;
+        for (int i = 0; i < recordList.size(); i++) {
+            if (recordList.get(i).recordType == RecordType.FIX) {
+                positionVonMarkerInRecordlist[j] = i;
+                j++;
+            }
+        }
+        double newLongitude;
+        double newLatitude;
+
+        for(int l = 0; l<routeMarkerList.size()-1;l++){
+
+            int anzInterpolatePoints = positionVonMarkerInRecordlist[l+1] - positionVonMarkerInRecordlist[l+0] - 1;
+            double deltaLongitude = routeMarkerList.get(l+1).getPosition().longitude -  routeMarkerList.get(l+0).getPosition().longitude;
+            double deltaLatitude =  routeMarkerList.get(l+1).getPosition().latitude -  routeMarkerList.get(l+0).getPosition().latitude;
+            float stepSize = 1/anzInterpolatePoints;
+
+            for(int k = 0; k<anzInterpolatePoints; k++){
+                stepSize = (k+1)*stepSize;
+                newLongitude =  recordList.get(positionVonMarkerInRecordlist[l+0]).location.getLongitude() + deltaLongitude*stepSize;
+                newLatitude =  recordList.get(positionVonMarkerInRecordlist[l+0]).location.getLatitude() + deltaLatitude*stepSize;
+                LatLng newLatLng = new LatLng(newLatitude,newLongitude);
+                recordList.get(positionVonMarkerInRecordlist[l+0]+k+1).interpolated = newLatLng;
+            }
+        }
+    }
+
     /**
      * Manipulates the map once available.
      * This callback is triggered when the map is ready to be used.

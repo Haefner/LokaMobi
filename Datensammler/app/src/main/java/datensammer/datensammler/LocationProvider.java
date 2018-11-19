@@ -111,7 +111,7 @@ public class LocationProvider {
 
                 /***********************************************************************************/
 
-                recordList.add(new Record(location,RecordType.AUTO));
+                recordList.add(new Record(null,InterpolationType.INTERPOLATED_POINT,location,RecordType.AUTO));
                 /*********************************************************************************/
 
             }
@@ -183,7 +183,7 @@ public class LocationProvider {
                 Log.d("LocationProvider", "------------------- Längengrad: " + locationResult.getLastLocation().getLongitude());
 
                 /***********************************************************************************/
-                recordList.add(new Record(locationResult.getLastLocation(),RecordType.AUTO));
+                recordList.add(new Record(null,InterpolationType.INTERPOLATED_POINT,locationResult.getLastLocation(),RecordType.AUTO));
                 /*********************************************************************************/
 
             }
@@ -213,6 +213,7 @@ public class LocationProvider {
 
             location  = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
             recordList.add(new Record(wp,InterpolationType.WAYPOINT,location,RecordType.FIX));
+            Log.d("fix point:", String.valueOf(recordList.get(0).location.getLatitude()));
 
         }
             getFusedLocationProviderClient(m_context).getLastLocation().addOnSuccessListener(m_activity, new OnSuccessListener<Location>() {
