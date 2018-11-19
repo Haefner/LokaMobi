@@ -1,10 +1,11 @@
 package datensammer.datensammler;
 
 import androidx.fragment.app.FragmentActivity;
-import datensammer.datensammler.entities.Location;
+import datensammer.datensammler.entities.ArtDesCircle;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -17,6 +18,8 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.Circle;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -37,6 +40,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private Button buttonAddWp;
     private Button buttonResetRoute;
     private Button changeView;
+    private Button buttonAuswertung;
     private boolean recordMode;
     private boolean editMode;
     private Marker cursorMarker;
@@ -70,6 +74,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         buttonAddWp = findViewById(R.id.buttonAddWp);
         buttonResetRoute = findViewById(R.id.buttonResetRoute);
         changeView = findViewById(R.id.buttonChangeView);
+        buttonAuswertung = findViewById(R.id.buttonAuswertung);
 
         buttonFix.setEnabled(recordMode);
 
@@ -129,6 +134,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             buttonStartStop.setText("Stop");
             locationProvider = new LocationProvider(this,this,locationMessung);
             locationProvider.start();
+            buttonAuswertung.setVisibility(View.INVISIBLE);
+            entferneAuswertung();
         } else {
             //Button Stop wurde gedrueckt
 
@@ -137,6 +144,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             csvExporter.write(routeMarkerList,null,null);
 
             buttonStartStop.setText("Start");
+            buttonAuswertung.setVisibility(View.VISIBLE);
             locationProvider.stop();
             //Setze den Wegpunkt der den Zeitpunkten zugeordnet werden soll zurück auf den ersten Wert der Liste.
             numberWegpunkt = 0;
@@ -171,14 +179,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         buttonStartStop.setEnabled(!editMode);
 
         if(editMode){
+            //Modus Bearbeiten
             buttonEditMode.setText("Save Route");
             buttonResetRoute.setVisibility(View.VISIBLE);
             buttonAddWp.setVisibility(View.VISIBLE);
+            entferneAuswertung();
+            buttonAuswertung.setVisibility(View.INVISIBLE);
         }else{
+            //Modus speichern
             buttonEditMode.setText("Edit Route");
             buttonResetRoute.setVisibility(View.INVISIBLE);
             buttonAddWp.setVisibility(View.INVISIBLE);
             cursorMarker.remove();
+            buttonAuswertung.setVisibility(View.INVISIBLE);
 
             saveRoute();
         }
@@ -215,6 +228,64 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
         else{
         mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);}
+    }
+
+
+    private boolean auswertungAnzeigenOn =false;
+    //Speicher alle Kreise um sie später wieder löschen zu können
+    List<Circle> mapCircle=new ArrayList<>();
+    public void onButtonAuswertung(View view)
+    {
+        //Auswertung anzeigen
+        if (auswertungAnzeigenOn == false) {
+            //Beispielarray für die Auswertung
+            List<LatLng> interpoliert = new ArrayList<>();
+            interpoliert.add(new LatLng(51.447015, 7.271958));
+            interpoliert.add(new LatLng(51.447312, 7.272762));
+            interpoliert.add(new LatLng(51.447270, 7.272212));
+            List<LatLng> messpunkt = new ArrayList<>();
+            messpunkt.add(new LatLng(51.446996, 7.271759));
+            messpunkt.add(new LatLng(51.446981, 7.272347));
+            messpunkt.add(new LatLng(51.447193, 7.272664));
+
+            for (LatLng latLng : interpoliert) {
+                visuelleAuswertung(latLng, ArtDesCircle.interpoliert, mMap);
+            }
+
+            for (LatLng latLng : messpunkt) {
+                visuelleAuswertung(latLng, ArtDesCircle.messpunkt, mMap);
+            }
+            auswertungAnzeigenOn =true;
+        }
+        else{
+            entferneAuswertung();
+            auswertungAnzeigenOn =false;
+        }
+    }
+
+    private void entferneAuswertung()
+    {
+        //Entferne alle Kreise
+        for(Circle circle:mapCircle)
+        {circle.remove();}
+    }
+
+    private void visuelleAuswertung(LatLng latLong, ArtDesCircle artDesCircle, GoogleMap mMap)
+    {
+
+        CircleOptions options = new CircleOptions();
+        if (artDesCircle == ArtDesCircle.interpoliert) {
+            options.fillColor(Color.RED);
+            options.strokeColor(Color.RED);
+        }
+        if (artDesCircle == ArtDesCircle.messpunkt) {
+            options.fillColor(Color.DKGRAY);
+            options.strokeColor(Color.DKGRAY);
+        }
+        options.radius(1);
+        options.center(latLong);
+
+        mapCircle.add(mMap.addCircle(options));
     }
 
     List<LatLng> interpolatePointsLocation(LatLng latLng1,  LatLng latLng2, long t1, long t2){
