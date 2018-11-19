@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.media.MediaScannerConnection;
-import android.net.Uri;
 import android.os.Environment;
 import android.util.Log;
 
@@ -14,8 +13,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
+
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Date;
@@ -36,14 +34,23 @@ public class CsvExporter {
         this.activity= activity;
     }
 
-    public void write(List<Marker> waypoints, List<LatLng> interpolations, List<Location> fixedPoints){
+    public void write(List<Record> recordList){
       //TODO: Umwandlung der Werte in String.
         StringBuffer stringBuffer = new StringBuffer();
-        for(Marker markers : waypoints ){
 
-            String longitudeString =String.valueOf(markers.getPosition().longitude);
-            String latitudeString = String.valueOf(markers.getPosition().latitude);
-            stringBuffer.append(markers.getTitle()+","+longitudeString+","+latitudeString+"\n");
+        for(Record record : recordList){
+
+            String interpolatedLat = String.valueOf(record.interpolated.latitude);
+            String interpolatedLong = String.valueOf(record.interpolated.longitude);
+            String locationLat = String.valueOf(record.location.getLatitude());
+            String locationLong = String.valueOf(record.location.getLongitude());
+            String error = String.valueOf(record.getErrorDistance());
+            stringBuffer.append(record.interpolationType.toString()+","
+                    +interpolatedLat+","
+                    +interpolatedLong+","
+                    +locationLat+","
+                    +locationLong+","
+                    +error);
         }
 
 
