@@ -139,7 +139,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             buttonStartStop.setText("Start");
             locationProvider.stop();
 
-            csvExporter.write(routeMarkerList,null,fixWaypoints);
+            csvExporter.write(locationProvider.getRecordList());
 
             //Setze den Wegpunkt der den Zeitpunkten zugeordnet werden soll zurück auf den ersten Wert der Liste.
             numberWegpunkt = 0;
@@ -155,11 +155,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
      */
     public void onButtonFixClick(View view){
         Log.d("Fix","Clicked");
-        android.location.Location location = new android.location.Location("Messpunkt");
-        location.setTime(System.currentTimeMillis());
-        location.setLatitude(routeMarkerList.get(numberWegpunkt).getPosition().latitude);
-        location.setLongitude(routeMarkerList.get(numberWegpunkt).getPosition().longitude);
-        fixWaypoints.add(location);
+
+        locationProvider.fix(routeMarkerList.get(numberWegpunkt).getPosition());
         numberWegpunkt= numberWegpunkt + 1 ;
         if(numberWegpunkt==routeMarkerList.size())
         {
