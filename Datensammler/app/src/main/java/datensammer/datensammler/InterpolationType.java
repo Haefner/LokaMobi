@@ -1,6 +1,12 @@
 package datensammer.datensammler;
 
 public enum InterpolationType {
-
-    WAYPOINT,INTERPOLATED_POINT
+    /**
+     * Der händisch gesetzte Wegpunkt
+     */
+    WAYPOINT,
+    /**
+     * Der berechnete Wegpunkt. Dieser liegt zwischen zwei Waypoints.
+     */
+    INTERPOLATED_POINT
 }

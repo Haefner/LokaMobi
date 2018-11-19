@@ -22,8 +22,14 @@ public class Record {
         this.recordType = recordType;
     }
 
+    /**
+     * Der Interpolierte Punkt der aus der Location berechnet wird.
+     */
     public LatLng interpolated;
     public InterpolationType interpolationType;
+    /**
+     * Der Punkt der vom Location Provider gemessen wird.
+     */
     public Location location;
     public RecordType recordType;
     private float errorDistance;
