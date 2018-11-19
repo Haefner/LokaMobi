@@ -80,6 +80,20 @@
         android:visibility="invisible" />
 
     <Button
+        android:id="@+id/buttonAuswertung"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/buttonFix"
+        android:layout_alignEnd="@+id/map"
+        android:layout_alignBottom="@+id/map"
+        android:layout_marginStart="19dp"
+        android:layout_marginEnd="222dp"
+        android:layout_marginBottom="11dp"
+        android:onClick="onButtonAuswertung"
+        android:text="Auswertung"
+        android:visibility="invisible" />
+
+    <Button
         android:id="@+id/buttonChangeView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -88,7 +102,7 @@
         android:layout_alignParentBottom="true"
         android:layout_marginStart="222dp"
         android:layout_marginEnd="19dp"
-        android:layout_marginBottom="10dp"
+        android:layout_marginBottom="11dp"
         android:onClick="onButtonChangeView"
         android:text="Karte/Satellit"
         android:visibility="visible" />
