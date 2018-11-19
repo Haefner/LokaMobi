@@ -19,11 +19,9 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Executor;
 
 import static com.google.android.gms.location.LocationServices.getFusedLocationProviderClient;
 
@@ -218,7 +216,7 @@ public class LocationProvider {
             getFusedLocationProviderClient(m_context).getLastLocation().addOnSuccessListener(m_activity, new OnSuccessListener<Location>() {
                 @Override
                 public void onSuccess(Location location) {
-
+                    recordList.add(new Record(wp,InterpolationType.WAYPOINT,location,RecordType.FIX));
                 }
             });
 

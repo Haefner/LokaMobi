@@ -4,13 +4,10 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
-import android.location.Location;
 import android.media.MediaScannerConnection;
 import android.os.Environment;
 import android.util.Log;
 
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
 
 import java.io.File;
 
@@ -29,6 +26,7 @@ public class CsvExporter {
 
     private Activity activity;
     private Context context;
+    private final String tableHeader = "Interpolation/Waypoint,Latitude GT,Longitude GT,Latitude TM, Longitude TM, Fehler in m\n";
     public CsvExporter(Activity activity,Context context){
         this.context = context;
         this.activity= activity;
@@ -37,7 +35,7 @@ public class CsvExporter {
     public void write(List<Record> recordList){
       //TODO: Umwandlung der Werte in String.
         StringBuffer stringBuffer = new StringBuffer();
-
+        stringBuffer.append(tableHeader);
         for(Record record : recordList){
 
             String interpolatedLat = String.valueOf(record.interpolated.latitude);
@@ -50,7 +48,7 @@ public class CsvExporter {
                     +interpolatedLong+","
                     +locationLat+","
                     +locationLong+","
-                    +error);
+                    +error+"\n");
         }
 
 

@@ -41,7 +41,7 @@ public class Record {
         locationInterpolated.setLatitude(interpolated.latitude);
         locationInterpolated.setLongitude(interpolated.longitude);
 
-        errorDistance = location.distanceTo(location);
+        errorDistance = location.distanceTo(locationInterpolated);
         return errorDistance;
     }
 }

@@ -236,6 +236,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     List<Circle> mapCircle=new ArrayList<>();
     public void onButtonAuswertung(View view)
     {
+
+        List<Record> recordList = locationProvider.getRecordList();
         //Auswertung anzeigen
         if (auswertungAnzeigenOn == false) {
             //Beispielarray für die Auswertung
@@ -248,13 +250,21 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             messpunkt.add(new LatLng(51.446981, 7.272347));
             messpunkt.add(new LatLng(51.447193, 7.272664));
 
-            for (LatLng latLng : interpoliert) {
-                visuelleAuswertung(latLng, ArtDesCircle.interpoliert, mMap);
-            }
+           for(Record record : recordList){
 
-            for (LatLng latLng : messpunkt) {
-                visuelleAuswertung(latLng, ArtDesCircle.messpunkt, mMap);
-            }
+               switch(record.interpolationType){
+
+                   case INTERPOLATED_POINT:
+                       visuelleAuswertung(record.interpolated,ArtDesCircle.interpoliert,mMap);
+                       visuelleAuswertung(new LatLng(record.location.getLatitude(),record.location.getLongitude()),ArtDesCircle.messpunkt,mMap);
+                       break;
+                   default:
+                       visuelleAuswertung(new LatLng(record.location.getLatitude(),record.location.getLongitude()),ArtDesCircle.messpunkt,mMap);
+
+
+               }
+
+           }
             auswertungAnzeigenOn =true;
         }
         else{
