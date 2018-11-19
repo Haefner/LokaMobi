@@ -11,8 +11,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
-import android.location.Location;
-
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -127,12 +125,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         buttonEditMode.setEnabled(!recordMode);
 
         if (recordMode) {
-            //Button Start wurde gedruecktgit 
+            //Button Start wurde gedrueckt
             buttonStartStop.setText("Stop");
             locationProvider = new LocationProvider(this,this,locationMessung);
             locationProvider.start();
         } else {
             //Button Stop wurde gedrueckt
+
+            //Ergebnisse in CSV speichern.
+            CsvExporter csvExporter = new CsvExporter(this,this);
+            csvExporter.write(routeMarkerList,null,null);
+
             buttonStartStop.setText("Start");
             locationProvider.stop();
             //Setze den Wegpunkt der den Zeitpunkten zugeordnet werden soll zurück auf den ersten Wert der Liste.
