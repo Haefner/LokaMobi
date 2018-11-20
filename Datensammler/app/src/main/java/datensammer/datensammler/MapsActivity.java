@@ -242,30 +242,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         List<Record> recordList = locationProvider.getRecordList();
         //Auswertung anzeigen
         if (auswertungAnzeigenOn == false) {
-            //Beispielarray für die Auswertung
-            List<LatLng> interpoliert = new ArrayList<>();
-            interpoliert.add(new LatLng(51.447015, 7.271958));
-            interpoliert.add(new LatLng(51.447312, 7.272762));
-            interpoliert.add(new LatLng(51.447270, 7.272212));
-            List<LatLng> messpunkt = new ArrayList<>();
-            messpunkt.add(new LatLng(51.446996, 7.271759));
-            messpunkt.add(new LatLng(51.446981, 7.272347));
-            messpunkt.add(new LatLng(51.447193, 7.272664));
-
            for(Record record : recordList){
-
                switch(record.interpolationType){
-
                    case INTERPOLATED_POINT:
                        visuelleAuswertung(record.interpolated,ArtDesCircle.interpoliert,mMap);
                        visuelleAuswertung(new LatLng(record.location.getLatitude(),record.location.getLongitude()),ArtDesCircle.messpunkt,mMap);
                        break;
                    default:
                        visuelleAuswertung(new LatLng(record.location.getLatitude(),record.location.getLongitude()),ArtDesCircle.messpunkt,mMap);
-
-
                }
-
            }
             auswertungAnzeigenOn =true;
         }
