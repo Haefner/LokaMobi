@@ -347,12 +347,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             int anzInterpolatePoints = positionVonMarkerInRecordlist[l+1] - positionVonMarkerInRecordlist[l+0] - 1;
             double deltaLongitude = routeMarkerList.get(l+1).getPosition().longitude -  routeMarkerList.get(l+0).getPosition().longitude;
             double deltaLatitude =  routeMarkerList.get(l+1).getPosition().latitude -  routeMarkerList.get(l+0).getPosition().latitude;
-            float stepSize = 1/anzInterpolatePoints;
+            double stepSize;
 
             for(int k = 0; k<anzInterpolatePoints; k++){
-                stepSize = (k+1)*stepSize;
-                newLongitude =  recordList.get(positionVonMarkerInRecordlist[l+0]).location.getLongitude() + deltaLongitude*stepSize;
-                newLatitude =  recordList.get(positionVonMarkerInRecordlist[l+0]).location.getLatitude() + deltaLatitude*stepSize;
+                stepSize = (k+1)/(double)(anzInterpolatePoints+1);
+                newLongitude =  routeMarkerList.get(l+0).getPosition().longitude + deltaLongitude*stepSize;
+                newLatitude =  routeMarkerList.get(l+0).getPosition().latitude + deltaLatitude*stepSize;
                 LatLng newLatLng = new LatLng(newLatitude,newLongitude);
                 recordList.get(positionVonMarkerInRecordlist[l+0]+k+1).interpolated = newLatLng;
             }
