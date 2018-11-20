@@ -216,6 +216,7 @@ public class LocationProvider {
             location  = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
             recordList.add(new Record(wp,InterpolationType.WAYPOINT,location,RecordType.FIX));
             Log.d("fix point:", String.valueOf(recordList.get(0).location.getLatitude()));
+            return;
 
         }
             getFusedLocationProviderClient(m_context).getLastLocation().addOnSuccessListener(m_activity, new OnSuccessListener<Location>() {
