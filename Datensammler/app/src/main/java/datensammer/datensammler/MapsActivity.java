@@ -102,6 +102,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
 
+    /*
+     * Androids Back-Button
+     */
+    @Override
+    public void onBackPressed(){
+        if(locationProvider != null){
+            locationProvider.stop();
+        }
+        super.onBackPressed();
+    }
+
 
     private  void saveRoute(){
         ArrayList<LatLng> positionList = new ArrayList<>();
@@ -148,7 +159,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             locationProvider.stop();
             interpolatePoints(locationProvider.getRecordList());
             List<Record> test = locationProvider.getRecordList();
-            csvExporter.write(locationProvider.getRecordList());
+//-------------            csvExporter.write(locationProvider.getRecordList());
 
             //Setze den Wegpunkt der den Zeitpunkten zugeordnet werden soll zurück auf den ersten Wert der Liste.
             numberWegpunkt = 0;

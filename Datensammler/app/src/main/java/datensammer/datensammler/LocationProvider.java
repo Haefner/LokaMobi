@@ -71,7 +71,7 @@ public class LocationProvider {
 
         if (m_enumLM == LocationMessung.GPS_LOCATION_PROVIDER ||
                 m_enumLM == LocationMessung.NETZWERK_LOCATION_PROVIDER) {
-            Log.d("LocationProvider", "positionierungMitLocationManager.........................");
+            Log.d("locationManager", "positionierungMitLocationManager.........................");
 
             positionierungMitLocationManager();
 
@@ -79,7 +79,7 @@ public class LocationProvider {
                 m_enumLM == LocationMessung.FUSED_LOCATION_PROVIDER_HIGH_ACCUANCY ||
                 m_enumLM == LocationMessung.FUSED_LOCATION_PROVIDER_LOW_POWER ||
                 m_enumLM == LocationMessung.FUSED_LOCATION_PROVIDER_NO_POWER) {
-            Log.d("LocationProvider", "positionierungMitFusedLocationProviderClient--------------------------------");
+            Log.d("FusedLocationProviderClient", "positionierungMitFusedLocationProviderClient--------------------------------");
             postionierungMitFusedLocationProviderClient();
         } else {
             Toast.makeText(m_context, "No LocationProvider selected.", Toast.LENGTH_SHORT).show();
@@ -105,7 +105,7 @@ public class LocationProvider {
                     isFirstLocation = false;
                 }
                 //set locationVariable
-                Log.d("LocationProvider", "....................Längengrad: " + location.getLongitude());
+                Log.d("locationManager", "....................Längengrad: " + location.getLongitude());
 
                 /***********************************************************************************/
 
@@ -130,16 +130,16 @@ public class LocationProvider {
                 m_activity.startActivity(intent);
             }
         };
-        if (ActivityCompat.checkSelfPermission(m_context.getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(m_context.getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(m_activity, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 0);
-        }
+        //if (ActivityCompat.checkSelfPermission(m_context.getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(m_context.getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        //    ActivityCompat.requestPermissions(m_activity, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 0);
+        //}
 
 
         if (m_enumLM == LocationMessung.GPS_LOCATION_PROVIDER) {
-            Log.d("LocationProvider", "GPS.........................");
+            Log.d("locationManager", "GPS.........................");
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, locationListener);
         } else if (m_enumLM == LocationMessung.NETZWERK_LOCATION_PROVIDER) {
-            Log.d("LocationProvider", "NETZWERK.........................");
+            Log.d("locationManager", "NETZWERK.........................");
             locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 0, locationListener);
         }
     }
@@ -152,15 +152,19 @@ public class LocationProvider {
         switch (m_enumLM) {
             case FUSED_LOCATION_PROVIDER_HIGH_ACCUANCY:
                 locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+                Log.d("FusedLocationProviderClient", "HIGH_ACCUANCY--------------------------------");
                 break;
             case FUSED_LOCATION_PROVIDER_BALANCED_POWER:
                 locationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+                Log.d("FusedLocationProviderClient", "BALANCED_POWER_ACCURACY--------------------------------");
                 break;
             case FUSED_LOCATION_PROVIDER_LOW_POWER:
                 locationRequest.setPriority(LocationRequest.PRIORITY_LOW_POWER);
+                Log.d("FusedLocationProviderClient", "LOW_POWER--------------------------------");
                 break;
             case FUSED_LOCATION_PROVIDER_NO_POWER:
                 locationRequest.setPriority(LocationRequest.PRIORITY_NO_POWER);
+                Log.d("FusedLocationProviderClient", "NO_POWER--------------------------------");
                 break;
         }
 
@@ -178,7 +182,7 @@ public class LocationProvider {
                     isFirstLocation = false;
                 }
                 //onLocatioChanged(locationResult.getLastLocation());
-                Log.d("LocationProvider", "------------------- Längengrad: " + locationResult.getLastLocation().getLongitude());
+                Log.d("FusedLocationProviderClient", "------------------- Längengrad: " + locationResult.getLastLocation().getLongitude());
 
                 /***********************************************************************************/
                 recordList.add(new Record(null,InterpolationType.INTERPOLATED_POINT,locationResult.getLastLocation(),RecordType.AUTO));
