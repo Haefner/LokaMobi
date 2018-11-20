@@ -171,6 +171,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         {
             //Alle Wegpunkte sind zugeordnet. Man muss erst stopp und start für die nächste Messung drücken
             buttonFix.setEnabled(false);
+            onButtonStartStopClick(view);
         }
     }
 
