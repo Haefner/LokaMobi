@@ -19,6 +19,7 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -109,7 +110,7 @@ public class LocationProvider {
 
                 /***********************************************************************************/
 
-                recordList.add(new Record(null,InterpolationType.INTERPOLATED_POINT,location,RecordType.AUTO));
+                recordList.add(new Record(null, InterpolationType.INTERPOLATED_POINT, location, RecordType.AUTO));
                 /*********************************************************************************/
 
             }
@@ -185,7 +186,7 @@ public class LocationProvider {
                 Log.d("FusedLocationProviderClient", "------------------- Längengrad: " + locationResult.getLastLocation().getLongitude());
 
                 /***********************************************************************************/
-                recordList.add(new Record(null,InterpolationType.INTERPOLATED_POINT,locationResult.getLastLocation(),RecordType.AUTO));
+                recordList.add(new Record(null, InterpolationType.INTERPOLATED_POINT, locationResult.getLastLocation(), RecordType.AUTO));
                 /*********************************************************************************/
 
             }
@@ -204,8 +205,9 @@ public class LocationProvider {
     }
 
 
-    public void fix(LatLng wp) {
+    public void fix(int numberWp, LatLng wp) {
         Location location;
+
         if (ActivityCompat.checkSelfPermission(m_context.getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(m_context.getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(m_activity, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 0);
         }
@@ -213,21 +215,19 @@ public class LocationProvider {
         if (m_enumLM == LocationMessung.GPS_LOCATION_PROVIDER ||
                 m_enumLM == LocationMessung.NETZWERK_LOCATION_PROVIDER) {
 
-            location  = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-            recordList.add(new Record(wp,InterpolationType.WAYPOINT,location,RecordType.FIX));
+            location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            recordList.add(new Record(wp, InterpolationType.WAYPOINT, location, RecordType.FIX));
             Log.d("fix point:", String.valueOf(recordList.get(0).location.getLatitude()));
-            return;
-
         }
-            getFusedLocationProviderClient(m_context).getLastLocation().addOnSuccessListener(m_activity, new OnSuccessListener<Location>() {
-                @Override
-                public void onSuccess(Location location) {
-                    recordList.add(new Record(wp,InterpolationType.WAYPOINT,location,RecordType.FIX));
-                }
-            });
+    }
+
+    public Task<Location> fusedFix(){
+        if (ActivityCompat.checkSelfPermission(m_context.getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(m_context.getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(m_activity, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 0);
+        }
 
 
-
+        return getFusedLocationProviderClient(m_context).getLastLocation();
     }
 }
 

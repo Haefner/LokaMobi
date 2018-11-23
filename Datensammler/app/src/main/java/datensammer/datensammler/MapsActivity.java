@@ -6,6 +6,7 @@ import datensammer.datensammler.entities.ArtDesCircle;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -23,6 +24,7 @@ import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -145,6 +147,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             buttonStartStop.setText("Stop");
             locationProvider = new LocationProvider(this,this,locationMessung);
             locationProvider.start();
+            onButtonFixClick(view);
             buttonAuswertung.setVisibility(View.INVISIBLE);
             entferneAuswertung();
         } else {
@@ -159,7 +162,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             locationProvider.stop();
             interpolatePoints(locationProvider.getRecordList());
             List<Record> test = locationProvider.getRecordList();
-//-------------            csvExporter.write(locationProvider.getRecordList());
+            csvExporter.write(locationProvider.getRecordList());
 
             //Setze den Wegpunkt der den Zeitpunkten zugeordnet werden soll zurück auf den ersten Wert der Liste.
             numberWegpunkt = 0;
@@ -176,14 +179,29 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onButtonFixClick(View view){
         Log.d("Fix","Clicked");
 
-        locationProvider.fix(routeMarkerList.get(numberWegpunkt).getPosition());
-        numberWegpunkt= numberWegpunkt + 1 ;
-        if(numberWegpunkt==routeMarkerList.size())
-        {
-            //Alle Wegpunkte sind zugeordnet. Man muss erst stopp und start für die nächste Messung drücken
-            buttonFix.setEnabled(false);
-            onButtonStartStopClick(view);
+        if(locationMessung == LocationMessung.GPS_LOCATION_PROVIDER || locationMessung == LocationMessung.NETZWERK_LOCATION_PROVIDER){
+            locationProvider.fix(numberWegpunkt,routeMarkerList.get(numberWegpunkt).getPosition());
+            numberWegpunkt= numberWegpunkt + 1 ;
+            if(numberWegpunkt==routeMarkerList.size())
+            {
+                //Alle Wegpunkte sind zugeordnet. Man muss erst stopp und start für die nächste Messung drücken
+                buttonFix.setEnabled(false);
+                onButtonStartStopClick(view);
+            }
         }
+        else{
+            locationProvider.fusedFix().addOnSuccessListener(location -> {
+                locationProvider.getRecordList().add(new Record(routeMarkerList.get(numberWegpunkt).getPosition(),InterpolationType.WAYPOINT,location,RecordType.FIX));
+                numberWegpunkt= numberWegpunkt + 1 ;
+                if(numberWegpunkt==routeMarkerList.size())
+                {
+                    //Alle Wegpunkte sind zugeordnet. Man muss erst stopp und start für die nächste Messung drücken
+                    buttonFix.setEnabled(false);
+                    onButtonStartStopClick(view);
+                }
+            });
+        }
+
     }
 
     public void onButtonEditRoute(View view){
